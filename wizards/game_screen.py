@@ -32,14 +32,20 @@ class GameScreen(object):
         self.total_regions = tot_r
         self.largest_region = largest
         #print(str(self.total_regions)  + " > " + str(self.largest_region))
+
+        #inventory manager
+        self.im = wizards.inventory_manager.InventoryManager()
         
         pl_pos = self.get_player_start()
         px = pl_pos[0]
         py = pl_pos[1]
         self.pl = wizards.player.Player(px,py)
+        sword = self.im.add_sword_to_character(self.pl, 0, None)
+        self.pl.set_current_weapon(sword)
         #self.collision_map[py][px] = 1
         self.all_sprite_list.add(self.pl)
         self.player_moved = False
+        # TODO Create entry doorway behind player
         
         self.cursor_line = []
         self.cline2 = []
@@ -62,12 +68,18 @@ class GameScreen(object):
         self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)       
         
         #place treasure
+        self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.temp_sprites = pygame.sprite.Group()
         self.treasure_locations = treasure_locations
+        self.treasure_list = []
         self.set_treasure()
-       
+        #self.get_item_by_id(0)
+
+
+
+        self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
+        self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
         self.monster_list = []
-        #self.init_monsters(8)
         self.init_monsters_2(8)
         
         self.dmg_list = []
@@ -155,9 +167,14 @@ class GameScreen(object):
             
         text5 = self.font1.render('Turn: ' + str(self.game_turn), True, wizards.constants.BLACK)
         screen.blit(text5, (wizards.constants.MSG_GUT_3,wizards.constants.MSGBOX_TOP+8))
-        
-        text6 = self.font1.render('X: ' + str(mx), True, wizards.constants.BLACK)
-        screen.blit(text6, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+8))
+
+        # Display item in square
+        # TODO Get correct return type
+        itemid = self.cell_contains_item(self.pl.x, self.pl.y)
+        if itemid > 0:
+            item = self.get_item_by_id(itemid)
+            text6 = self.font1.render('Item: ' + item.itemname, True, wizards.constants.BLACK)
+            screen.blit(text6, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+8))
         
         #magic box
         pygame.draw.rect(screen, wizards.constants.MAG_DB, (wizards.constants.MB_BACK_L,wizards.constants.MB_BACK_T,wizards.constants.MB_BACK_W,wizards.constants.MB_BACK_H))
@@ -296,6 +313,7 @@ class GameScreen(object):
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     self.manager.go_to(wizards.title_screen.TitleScreen())
+                    # TODO Add diagonal movement
                 elif e.key == pygame.K_UP:
                     moveUp = True
                     moveDown = False
@@ -349,13 +367,15 @@ class GameScreen(object):
                         self.player_moved = True
                         
                         #check accuracy
-                        
+
+                        # TODO Add max range to spells
+
                         dis = self.get_distance(start[0],start[1],tmp[0],tmp[1])
                         dis_mod = self.get_distance_mod(dis)
                         self.accuracy = self.base_accuracy + dis_mod
                         hit = self.ranged_combat(self.accuracy)
-                            
-                        #print(str(dis) + " > " + str(dis_mod) + " > " + str(hit))
+
+                        # TODO Abstract ranged combat a bit more
                         
                         #if miss change hit location
                         if not hit:
@@ -407,12 +427,13 @@ class GameScreen(object):
                                     #print(str(monster.x) + " >> " + str(ex_x))
                                     if monster.x == ex_x and monster.y == ex_y:
                                         #print(monster.name)
-                                        #take damage
+                                        # take damage
                                         dmg = random.randrange(1,self.pl.cur_spell.damage)
                                         monster.take_damage(dmg)
                                         dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
                                         self.dmg_list.append(dm_token)
-                        #charm spell
+
+                        # charm spell
                         elif self.pl.cur_spell.spell_type == 2:
                             self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
                             tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
@@ -463,17 +484,23 @@ class GameScreen(object):
             if time.time() - 0.5 > lastmovetime:
                 
                 if moveUp:
-                    self.pl.updatePlayer(0,self.collision_map)
-                    self.player_moved = True
+                    # TODO Check for treasure in next move
+                    if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
+                        self.pl.updatePlayer(0,self.collision_map)
+                        self.player_moved = True
+                    # TODO Add hand to hand combat to movement
                 elif moveDown:
-                    self.pl.updatePlayer(2,self.collision_map)
-                    self.player_moved = True
+                    if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
+                        self.pl.updatePlayer(2,self.collision_map)
+                        self.player_moved = True
                 elif moveLeft:
-                    self.pl.updatePlayer(3,self.collision_map)
-                    self.player_moved = True
+                    if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
+                        self.pl.updatePlayer(3,self.collision_map)
+                        self.player_moved = True
                 elif moveRight:
-                    self.pl.updatePlayer(1,self.collision_map)        
-                    self.player_moved = True
+                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
+                        self.pl.updatePlayer(1,self.collision_map)
+                        self.player_moved = True
                 
                 if not magic_cast and self.player_moved == True:
                     self.pl.restore_magic(self.pl.magic_restore)
@@ -771,8 +798,6 @@ class GameScreen(object):
             
     
     def init_monsters_2(self, num_mons):
-        
-        mons_gen = wizards.monster_gen.MonsterGenerator(self.level,self.level_score)
         positions = []
 
         for i in range(num_mons):
@@ -781,7 +806,7 @@ class GameScreen(object):
                 start_pos = self.get_monster_start()
             positions.append(start_pos)
         
-        self.monster_list = mons_gen.return_monster_list(positions)
+        self.monster_list = self.mons_gen.return_monster_list(positions, self.im, 1)
         
         for m in self.monster_list:
             self.monster_sprites.add(m)
@@ -885,12 +910,47 @@ class GameScreen(object):
         self.treasure_locations = self.treasure_locations + add_list
         
         num_treasures = random.randrange(1,self.level_score+1)
+
+        placed_treasure = []
         for l in range(num_treasures):
             loc = random.choice(self.treasure_locations)
-            #dis = self.get_h_distance(loc[0],loc[1])
-            t = wizards.temp_gfx.TempGraphic(loc[0],loc[1])
-            self.temp_sprites.add(t)                
-                #max_val = v
-        #print(str(max_val))
-        #print(str(self.treasure_locations))
-        
+            if len(placed_treasure) < 1:
+                placed_treasure.append(loc)
+            else:
+                while self.is_too_near(loc[0],loc[1],placed_treasure,20):
+                    loc = random.choice(self.treasure_locations)
+                placed_treasure.append(loc)
+
+        for treasure in placed_treasure:
+            t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
+            self.treasure_list.append(t)
+            self.temp_sprites.add(t)
+
+    def cell_contains_monster(self, x, y):
+        return self.monster_map[y][x]
+
+    def cell_contains_item(self, x, y):
+        return self.treasure_map[y][x]
+
+    def get_item_by_id(self, number):
+        for treasure in self.treasure_list:
+            if treasure.item_id == number:
+                return treasure
+        return None
+
+    def get_monster_by_id(self, number):
+        for monster in self.monster_list:
+            if monster.monster_id == number:
+                return monster
+        return None
+
+    def resolve_hand_combat(self, monster_id):
+        monster = self.get_monster_by_id(monster_id)
+        resolver = wizards.CombatResolver()
+        # TODO Melee combat
+
+    def pick_up_treasure(self):
+        pass
+        # TODO Pick up treasure/items
+
+

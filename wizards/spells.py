@@ -10,7 +10,7 @@ class Spell(object):
         self.area_based = area
         self.damage = None
         if self.spell_type == 1:
-            self.damage = 8
-            self.magic_cost = 10
+            self.damage = 6
+            self.magic_cost = 25
         if self.spell_type == 2:
-            self.magic_cost = 10
+            self.magic_cost = 50

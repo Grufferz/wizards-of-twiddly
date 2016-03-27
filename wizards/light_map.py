@@ -1,8 +1,7 @@
 import wizards.constants
 
 class LightMap(object):
-    
-
+    """Code based on this article: http://www.roguebasin.com/index.php?title=PythonShadowcastingImplementation"""
     
     def __init__(self, world):
         self.data = world

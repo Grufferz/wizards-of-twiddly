@@ -12,9 +12,9 @@ class Player(pygame.sprite.Sprite):
         self.y = y
         self.orig_hp = random.randrange(10,20) + 10
         self.hp = self.orig_hp         
-        self.max_magic = 80
+        self.max_magic = 50
         self.magic = self.max_magic
-        self.magic_restore = 3
+        self.magic_restore = 2
         self.spell_list = []
         fb = wizards.spells.Spell("Fireball", 1, True, None, 6)
         self.spell_list.append(fb)
@@ -22,8 +22,12 @@ class Player(pygame.sprite.Sprite):
         self.spell_list.append(charm)
         self.cur_spell = self.spell_list[0]
         self.spell_index = 0
+        self.inventory = []
+        self.hand_weapon = None
         self.dead = False
         self.sight = 40
+        self.xp = 0
+        self.level = 1
         
     def updatePlayer(self,direction,col_map):
         
@@ -82,5 +86,12 @@ class Player(pygame.sprite.Sprite):
     def take_damage(self, dmg):
         self.hp -= dmg
         if self.hp < 1:
-            self.dead = True    
+            self.dead = True
+
+    def add_inventory_item(self, item):
+        self.inventory.append(item)
+
+    def set_current_weapon(self, weapon):
+        if weapon.equipment:
+            self.hand_weapon = weapon
  

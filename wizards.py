@@ -9,6 +9,7 @@ def main():
     random.seed()
     screen = pygame.display.set_mode(constants.SCREENSIZE)
     timer = pygame.time.Clock()
+    pygame.display.set_caption("The Wizards Of Twiddly")
     running = True
     
     manager = scene_manager.SceneManager()
