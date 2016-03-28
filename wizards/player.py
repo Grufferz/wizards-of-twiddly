@@ -112,4 +112,7 @@ class Player(pygame.sprite.Sprite):
             return self.hand_weapon.max_damage
         else:
             return 0
+
+    def add_xp(self, amount):
+        self.xp += amount
  

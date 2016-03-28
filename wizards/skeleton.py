@@ -11,7 +11,9 @@ class Skeleton(BaseMonster):
         self.rect.x = x * wizards.constants.CHAR_SIZE
         self.rect.y = y * wizards.constants.CHAR_SIZE
 
+        self.armour_rating = 7
         self.morale = 12
+        self.xp_mod = 1
         self.magic_resistance = 8 + random.randrange(1,6)
         self.charmed = False
         self.charmed_by = None

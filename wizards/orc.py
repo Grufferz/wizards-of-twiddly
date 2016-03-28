@@ -11,9 +11,12 @@ class Orc(BaseMonster):
         self.rect.x = x * wizards.constants.CHAR_SIZE
         self.rect.y = y * wizards.constants.CHAR_SIZE
 
+        self.armour_rating = 6
         self.morale = 8
+        self.xp_mod = 1
         self.magic_resistance = 6 + random.randrange(1,6)
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None
+
         

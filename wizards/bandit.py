@@ -12,6 +12,8 @@ class Bandit(BaseMonster):
         self.rect.y = y * wizards.constants.CHAR_SIZE
 
         self.morale = 8
+        self.armour_rating = 6
+        self.xp_mod = 1
         self.magic_resistance = 6 + random.randrange(1,6)
         self.charmed = False
         self.charmed_by = None

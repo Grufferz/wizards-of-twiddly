@@ -138,7 +138,7 @@ class GameScreen(object):
         
         text1 = self.font1.render('Current Spell: ' + self.pl.cur_spell.name, True, wizards.constants.BLACK)
         #target = self.get_item_cursor()
-        #text2 = self.font1.render('Target: ' + target, True, constants.BLACK)
+        text2 = self.font1.render('XP: ' + str(self.pl.xp), True, wizards.constants.BLACK)
 
         (mouse_x, mouse_y) = pygame.mouse.get_pos()
         mx, my = self.convert_screen_pos_to_grid(mouse_x,mouse_y)          
@@ -154,7 +154,7 @@ class GameScreen(object):
         text3 = self.font1.render(ds, True, wizards.constants.BLACK)
                 
         screen.blit(text1, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+8))
-        #screen.blit(text2, (constants.MSG_GUT_1,constants.MSGBOX_TOP+32))
+        screen.blit(text2, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+32))
         screen.blit(text3, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+32))
         
         start = self.pl.get_pos_tuple()

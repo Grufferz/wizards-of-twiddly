@@ -16,6 +16,7 @@ class BaseMonster(pygame.sprite.Sprite):
         self.current_weapon = None
         self.m_type = m_type
         self.fleeing = False
+        self.morale = 6
 
         # TODO Monster AI
 
@@ -59,3 +60,16 @@ class BaseMonster(pygame.sprite.Sprite):
         for i in range(num_of_dice):
             total += (random.randrange(0,8)+1)
         return total
+
+    def in_panic(self):
+        roll = (random.randrange(6) + 1) + (random.randrange(6) + 1)
+        if roll > self.morale:
+            return True
+        else:
+            return False
+
+    def get_weapon_damage(self):
+        if self.current_weapon is not None:
+            return self.current_weapon.max_damage
+        else:
+            return 0
