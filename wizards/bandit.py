@@ -14,7 +14,8 @@ class Bandit(BaseMonster):
         self.morale = 8
         self.armour_rating = 6
         self.xp_mod = 1
-        self.magic_resistance = 6 + random.randrange(1,6)
+        self.save_magic = 15
+        self.charmable = True
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None

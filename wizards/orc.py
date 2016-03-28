@@ -14,7 +14,8 @@ class Orc(BaseMonster):
         self.armour_rating = 6
         self.morale = 8
         self.xp_mod = 1
-        self.magic_resistance = 6 + random.randrange(1,6)
+        self.save_magic = 16
+        self.charmable = True
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None

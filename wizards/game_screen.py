@@ -4,14 +4,15 @@ import time
 
 class GameScreen(object):
     
-    def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level):
+    def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level, pl_start, special_zones):
         super(GameScreen, self).__init__()
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 28)
         self.font1 = pygame.font.SysFont('Arial', 20)
         self.font2 = pygame.font.Font(None, 14)
         self.font3 = pygame.font.Font(None, 18)        
-        
+
+        # TODO Add level saving
         self.level = level
         self.level_score = random.randrange(1,7) + random.randrange(1,7)
         print("SCORE=" + str(self.level_score))
@@ -36,9 +37,10 @@ class GameScreen(object):
         #inventory manager
         self.im = wizards.inventory_manager.InventoryManager()
         
-        pl_pos = self.get_player_start()
-        px = pl_pos[0]
-        py = pl_pos[1]
+        # pl_pos = self.get_player_start()
+
+        px = pl_start[0]
+        py = pl_start[1]
         self.pl = wizards.player.Player(px,py)
         sword = self.im.add_sword_to_character(self.pl, 0, None)
         self.pl.set_current_weapon(sword)
@@ -46,6 +48,7 @@ class GameScreen(object):
         self.all_sprite_list.add(self.pl)
         self.player_moved = False
         # TODO Create entry doorway behind player
+        self.special_zones = special_zones
         
         self.cursor_line = []
         self.cline2 = []
@@ -63,13 +66,13 @@ class GameScreen(object):
         
         self.pop_up_visible = False
         
-      #setup lit_map
+        # setup lit_map
         self.light = wizards.light_map.LightMap(self.collision_map)
         self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)       
         
         #place treasure
         self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
-        self.temp_sprites = pygame.sprite.Group()
+        self.treasure_sprites = pygame.sprite.Group()
         self.treasure_locations = treasure_locations
         self.treasure_list = []
         self.set_treasure()
@@ -83,8 +86,8 @@ class GameScreen(object):
         self.init_monsters_2(8)
         
         self.dmg_list = []
-        
-        
+
+        self.temp_sprites = pygame.sprite.Group()
         
         self.dead_gfx = pygame.sprite.Group()
         #self.charm_gfx = pygame.sprite.Group()
@@ -169,7 +172,6 @@ class GameScreen(object):
         screen.blit(text5, (wizards.constants.MSG_GUT_3,wizards.constants.MSGBOX_TOP+8))
 
         # Display item in square
-        # TODO Get correct return type
         itemid = self.cell_contains_item(self.pl.x, self.pl.y)
         if itemid > 0:
             item = self.get_item_by_id(itemid)
@@ -233,8 +235,9 @@ class GameScreen(object):
             
         #self.dead_gfx.draw(screen)
         
-
-        self.temp_sprites.draw(screen)        
+        # treasure sprites
+        self.treasure_sprites.draw(screen)
+        # self.temp_sprites.draw(screen)
                 
         #pop up box
         
@@ -307,7 +310,7 @@ class GameScreen(object):
                 
                 
     def handle_events(self, events):
-        moveLeft = moveRight = moveUp = moveDown = False
+        moveLeft = moveRight = moveUp = moveDown = pick_up = False
         magic_cast = False
         
         for e in events:
@@ -346,6 +349,8 @@ class GameScreen(object):
                     moveLeft = False
                     moveDown = True
                     moveRight = True
+                elif e.key == pygame.K_p:
+                    pick_up = True
                 elif e.key == pygame.K_n:
                     self.cycle_spell()
                 elif e.key == pygame.K_m:
@@ -445,7 +450,9 @@ class GameScreen(object):
                                 ex_y = gp[1]
                                 for monster in self.monster_list:
                                     #print(str(monster.x) + " >> " + str(ex_x))
-                                    if monster.x == ex_x and monster.y == ex_y:
+                                    # saving throw
+                                    roll = random.randrange(20) + 1
+                                    if monster.x == ex_x and monster.y == ex_y and (roll < monster.save_magic):
                                         #print(monster.name)
                                         # take damage
                                         dmg = random.randrange(1,self.pl.cur_spell.damage)
@@ -472,8 +479,8 @@ class GameScreen(object):
                                 ex_x = gp[0]
                                 ex_y = gp[1]
                                 for monster in self.monster_list:
-                                    if monster.x == ex_x and monster.y == ex_y:
-                                        ch = self.test_charm(monster.magic_resistance)
+                                    if monster.x == ex_x and monster.y == ex_y and monster.charmable:
+                                        ch = self.test_charm(monster.save_magic)
                                         print(str(ch))
                                         if ch:
                                             #xp = monster.rect.centerx
@@ -513,17 +520,19 @@ class GameScreen(object):
                 elif e.key == pygame.K_z:
                     moveDown = False
                     moveLeft = False
+                elif e.key == pygame.K_p:
+                    pick_up = False
 
                     
             if time.time() - 0.5 > lastmovetime:
 
+                # TODO If monster dies, drop treasure
+
                 # move up
                 if moveUp and not moveLeft and not moveRight and not moveDown:
-                    # TODO Check for treasure in next move
                     if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
                         self.pl.updatePlayer(0,self.collision_map)
                         self.player_moved = True
-                    # TODO Add hand to hand combat to movement
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
                         mons = self.get_monster_by_id(mid)
@@ -623,6 +632,18 @@ class GameScreen(object):
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
+                # pick up item if we are standing on one
+                elif pick_up:
+                    item_id = self.cell_contains_item(self.pl.x, self.pl.y)
+                    if item_id > 0:
+                        item = self.get_item_by_id(item_id)
+                        self.pl.add_item_to_inventory(item)
+                        self.pl.add_xp(item.value)
+                        self.treasure_map[self.pl.y][self.pl.x] = 0
+                        self.treasure_sprites.remove(item)
+
+
+
 
 
                 # restore magic
@@ -981,9 +1002,7 @@ class GameScreen(object):
             self.pl.spell_index = next_spell
             
     def test_charm(self, resist):
-        roll = 0 
-        for i in range(3):
-            roll += random.randrange(6)+1
+        roll = random.randrange(20)+1
         if roll >= 17 or roll > resist:
             return True
         else:
@@ -1048,7 +1067,8 @@ class GameScreen(object):
         for treasure in placed_treasure:
             t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
             self.treasure_list.append(t)
-            self.temp_sprites.add(t)
+            #self.temp_sprites.add(t)
+            self.treasure_sprites.add(t)
 
     def cell_contains_monster(self, x, y):
         return self.monster_map[y][x]
@@ -1071,10 +1091,7 @@ class GameScreen(object):
     def resolve_hand_combat(self, monster_id):
         monster = self.get_monster_by_id(monster_id)
         resolver = wizards.CombatResolver()
-        # TODO Melee combat
+        # TODO Melee combat for monsters
 
-    def pick_up_treasure(self):
-        pass
-        # TODO Pick up treasure/items
 
 

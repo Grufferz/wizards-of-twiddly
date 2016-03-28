@@ -12,10 +12,10 @@ class InventoryManager():
     def add_gold(self, x, y, t_map, value=None, owner=None):
         name = "Gold"
         if value is None:
-            value = random.randrange(5)+1
+            value = random.randrange(5)+3
         if owner is not None:
             owner = owner
-        gold = wizards.inventory_object.Gold(self._itemcount, x, y, name, owner, value, False)
+        gold = wizards.inventory_object.Gold(self._itemcount, x, y, name, False, owner, value)
         t_map[y][x] = self._itemcount
         self._itemcount += 1
         return gold

@@ -1,8 +1,6 @@
 
 import pygame, random
 from wizards import *
-#import wizards.constants,
-#import wizards.scene_manager, wizards.title_screen, wizards.game_screen
 
 def main():
     pygame.init()

@@ -14,7 +14,8 @@ class Skeleton(BaseMonster):
         self.armour_rating = 7
         self.morale = 12
         self.xp_mod = 1
-        self.magic_resistance = 8 + random.randrange(1,6)
+        self.save_magic = 16
+        self.charmable = False
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None

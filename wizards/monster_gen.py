@@ -14,7 +14,7 @@ class MonsterGenerator():
         
         ret_list = []
 
-        if mt == 1:
+        if mt == wizards.constants.WANDERING:
             m_type = "Wandering"
         else:
             m_type = "Lair"

@@ -28,6 +28,7 @@ class Gold(InventoryObject):
         self.rect = self.image.get_rect()
         self.rect.x = x * wizards.constants.CHAR_SIZE
         self.rect.y = y * wizards.constants.CHAR_SIZE
+        self.weight = 0
 
 
 class Sword(InventoryObject):
@@ -40,5 +41,6 @@ class Sword(InventoryObject):
         self.rect.x = x * wizards.constants.CHAR_SIZE
         self.rect.y = y * wizards.constants.CHAR_SIZE
         self.max_damage = 6
+        self.weight = 3
         # TODO Work out weapon damages
 

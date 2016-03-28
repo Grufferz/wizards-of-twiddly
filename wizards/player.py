@@ -24,10 +24,13 @@ class Player(pygame.sprite.Sprite):
         self.spell_index = 0
         self.inventory = []
         self.hand_weapon = None
+        self.current_armour = None
+        self.ac = 9
         self.dead = False
         self.sight = 40
         self.xp = 0
         self.level = 1
+        self.carry_weight = 0
         
     def updatePlayer(self,direction,col_map):
         
@@ -115,4 +118,13 @@ class Player(pygame.sprite.Sprite):
 
     def add_xp(self, amount):
         self.xp += amount
+
+    def add_item_to_inventory(self, item):
+        if item.itemname == "Gold":
+            for itm in self.inventory:
+                if itm.itemname == "Gold":
+                    itm.value += item.value
+        else:
+            self.carry_weight += item.weight
+            self.inventory.append(item)
  

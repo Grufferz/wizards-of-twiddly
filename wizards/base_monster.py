@@ -17,6 +17,7 @@ class BaseMonster(pygame.sprite.Sprite):
         self.m_type = m_type
         self.fleeing = False
         self.morale = 6
+        self.save_magic = 16
 
         # TODO Monster AI
 

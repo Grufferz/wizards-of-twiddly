@@ -1,7 +1,7 @@
 
 total = 0
 
-tnl = 30
+tnl = 100
 
 fac = 0.80
 

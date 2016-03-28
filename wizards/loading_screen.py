@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 import wizards.building_maker, wizards.forest_maker, wizards.game_objects, wizards.my_queue, wizards.game_screen
 class LoadingScreen(object):
     
@@ -35,6 +35,8 @@ class LoadingScreen(object):
         
         #self.treasure_map = [[0 for x in range(constants.WIDTH)] for y in range(constants.HEIGHT)]
         self.treasure_locations = None
+        self.pl_start = None
+        self.special_zones = []
            
         
 
@@ -82,15 +84,20 @@ class LoadingScreen(object):
             self.max_region = self.process_regions()  
             self.regions_loaded = True
             self.treasure_locations = self.wall_test()
-                
-                
-                
+            self.pl_start = self.get_player_start()
+            #self.special_zones += self.carve_exit()
+            # TODO create exits for player to other levels
+            self.special_zones = self.carve_door(self.pl_start[0], self.pl_start[1])
+            self.special_zones += self.carve_exit()
+            # self.print_map(self.c_map)
                 
     def handle_events(self, events):
         for e in events:
             if self.finished and self.objects_loaded and self.regions_loaded:
                 if e.type == pygame.KEYDOWN:
-                    self.manager.go_to(wizards.game_screen.GameScreen(self.world, self.c_map, self.object_map, self.region_map, self.total_regions, self.max_region, self.buildings, self.treasure_locations, self.level))
+                    self.manager.go_to(wizards.game_screen.GameScreen(self.world, self.c_map, self.object_map, self.region_map, self.total_regions,
+                                                                      self.max_region, self.buildings, self.treasure_locations, self.level,
+                                                                      self.pl_start, self.special_zones))
                     
     
     
@@ -108,6 +115,7 @@ class LoadingScreen(object):
         #for y in range(constants.FHEIGHT):
         for x in range(wizards.constants.FWIDTH):
             if self.world[column][x] == 1:
+                # TODO optimise the fire effect grid
                 f = wizards.game_objects.FireEffect(25.0)
                 self.object_map[column][x] = wizards.game_objects.TreeWood(x,column,f)
                     
@@ -204,6 +212,83 @@ class LoadingScreen(object):
                     
         return len(came_from)
 
+    def get_player_start(self):
+        l = []
+        y = wizards.constants.HEIGHT - 2
+        for x in range(wizards.constants.WIDTH):
+            if self.c_map[y][x] == 0:
+                if self.get_cur_region(x,y) == self.max_region:
+                    tup = (x,y)
+                    l.append(tup)
+
+        if len(l) > 0:
+            t = random.choice(l)
+            return t
+        else:
+            return (0,0)
+
+    def get_cur_region(self, x, y):
+        return self.region_map[y][x]
+
+    def in_largest_region(self,x,y):
+        return self.region_map[y][x] == self.largest_region
+
+    def carve_door(self, x, y):
+        ret_list = []
+
+        self.c_map[y+1][x] = 0
+        self.c_map[y+1][x-1] = 0
+        self.c_map[y+1][x+1] = 0
+        self.c_map[y+1][x-2] = 0
+        self.c_map[y+1][x+2] = 0
+
+        self.buildings[y + 1][x] = 0
+        self.buildings[y + 1][x - 1] = 0
+        self.buildings[y + 1][x + 1] = 0
+        self.buildings[y + 1][x - 2] = 0
+        self.buildings[y + 1][x + 2] = 0
+
+        ret_list.append((x,y+1))
+        ret_list.append((x-1,y+1))
+        ret_list.append((x-2,y+1))
+        ret_list.append((x+1,y+1))
+        ret_list.append((x+2,y+1))
+
+        return ret_list
+
+    def carve_exit(self):
+        ret_list = []
+        l = []
+        y = 1
+        for x in range(wizards.constants.WIDTH):
+            if self.c_map[y][x] == 0:
+                if self.get_cur_region(x,y) == self.max_region:
+                    tup = (x,y)
+                    l.append(tup)
+
+        t = random.choice(l)
+        xp = t[0]
+        yp = t[1]
+
+        self.c_map[yp-1][xp] = 0
+        self.c_map[yp-1][xp+1] = 0
+        self.c_map[yp-1][xp-1] = 0
+        self.c_map[yp-1][xp-2] = 0
+        self.c_map[yp-1][xp+2] = 0
+
+        self.buildings[yp-1][xp] = 0
+        self.buildings[yp-1][xp+1] = 0
+        self.buildings[yp-1][xp-1] = 0
+        self.buildings[yp-1][xp-2] = 0
+        self.buildings[yp-1][xp+2] = 0
+
+        ret_list.append((yp-1, xp+2))
+        ret_list.append((yp-1, xp+1))
+        ret_list.append((yp-1, xp))
+        ret_list.append((yp-1, xp-1))
+        ret_list.append((yp-1, xp-2))
+
+        return ret_list
 
     def print_map(self, m):
         s = ""

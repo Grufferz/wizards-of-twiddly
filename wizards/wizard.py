@@ -14,7 +14,8 @@ class Wizard(BaseMonster):
         self.morale = 10
         self.armour_rating = 4
         self.xp_mod = 1.4
-        self.magic_resistance = 8 + random.randrange(1,6)
+        self.save_magic = 15
+        self.charmable = True
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None
