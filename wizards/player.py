@@ -40,7 +40,19 @@ class Player(pygame.sprite.Sprite):
         elif direction == 2:
             new_y = self.y + 1
         elif direction == 3:
-            new_x = self.x - 1  
+            new_x = self.x - 1
+        elif direction == 4:
+            new_x = self.x + 1
+            new_y = self.y -1
+        elif direction == 5:
+            new_x = self.x + 1
+            new_y = self.y + 1
+        elif direction == 6:
+            new_x = self.x - 1
+            new_y = self.y + 1
+        elif direction == 7:
+            new_x = self.x - 1
+            new_y = self.y - 1
         
         if self.is_valid_move(new_x, new_y, col_map):
             #col_map[self.y][self.x] = 0

@@ -314,19 +314,38 @@ class GameScreen(object):
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     self.manager.go_to(wizards.title_screen.TitleScreen())
-                    # TODO Add diagonal movement
-                elif e.key == pygame.K_UP:
+                elif e.key == pygame.K_w:
                     moveUp = True
                     moveDown = False
-                elif e.key == pygame.K_DOWN:
+                elif e.key == pygame.K_q:
+                    moveUp = True
+                    moveLeft = False
+                    moveDown = False
+                    moveRight = True
+                elif e.key == pygame.K_e:
+                    moveUp = True
+                    moveLeft = True
+                    moveDown = False
+                    moveRight = False
+                elif e.key == pygame.K_x:
                     moveUp = False
                     moveDown = True
-                elif e.key == pygame.K_LEFT:
+                elif e.key == pygame.K_a:
                     moveLeft = True
                     moveRight = False
-                elif e.key == pygame.K_RIGHT:
+                elif e.key == pygame.K_d:
                     moveRight = True
-                    moveLeft = False     
+                    moveLeft = False
+                elif e.key == pygame.K_c:
+                    moveUp = False
+                    moveLeft = True
+                    moveDown = True
+                    moveRight = False
+                elif e.key == pygame.K_z:
+                    moveUp = False
+                    moveLeft = False
+                    moveDown = True
+                    moveRight = True
                 elif e.key == pygame.K_n:
                     self.cycle_spell()
                 elif e.key == pygame.K_m:
@@ -474,18 +493,32 @@ class GameScreen(object):
                 self.mouse_down = False
             
             if e.type == pygame.KEYUP:
-                if e.key == pygame.K_UP:
+                if e.key == pygame.K_w:
                     moveUp = False
-                elif e.key == pygame.K_DOWN:
+                elif e.key == pygame.K_x:
                     moveDown = False
-                elif e.key == pygame.K_LEFT:
+                elif e.key == pygame.K_a:
                     moveLeft = False
-                elif e.key == pygame.K_RIGHT:
-                    moveRight = False         
+                elif e.key == pygame.K_d:
+                    moveRight = False
+                elif e.key == pygame.K_q:
+                    moveUp = False
+                    moveLeft = False
+                elif e.key == pygame.K_e:
+                    moveUp = False
+                    moveRight = False
+                elif e.key == pygame.K_c:
+                    moveDown = False
+                    moveRight = False
+                elif e.key == pygame.K_z:
+                    moveDown = False
+                    moveLeft = False
+
                     
             if time.time() - 0.5 > lastmovetime:
-                
-                if moveUp:
+
+                # move up
+                if moveUp and not moveLeft and not moveRight and not moveDown:
                     # TODO Check for treasure in next move
                     if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
                         self.pl.updatePlayer(0,self.collision_map)
@@ -499,7 +532,8 @@ class GameScreen(object):
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
-                elif moveDown:
+                # move down
+                elif moveDown and not moveLeft and not moveRight and not moveUp:
                     if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
                         self.pl.updatePlayer(2,self.collision_map)
                         self.player_moved = True
@@ -511,7 +545,8 @@ class GameScreen(object):
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
-                elif moveLeft:
+                # move left
+                elif moveLeft and not moveUp and not moveDown and not moveRight:
                     if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
                         self.pl.updatePlayer(3,self.collision_map)
                         self.player_moved = True
@@ -523,7 +558,8 @@ class GameScreen(object):
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
-                elif moveRight:
+                # move right
+                elif moveRight and not moveUp and not moveDown and not moveLeft:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
                         self.pl.updatePlayer(1,self.collision_map)
                         self.player_moved = True
@@ -535,6 +571,61 @@ class GameScreen(object):
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
+                # move NW
+                elif moveRight and moveUp and not moveDown and not moveLeft:
+                    if self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1) == 0:
+                        self.pl.updatePlayer(7, self.collision_map)
+                        self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
+                # move NE
+                elif moveLeft and moveUp and not moveDown and not moveRight:
+                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1) == 0:
+                        self.pl.updatePlayer(4, self.collision_map)
+                        self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
+                # move SE
+                elif moveDown and moveLeft and not moveUp and not moveRight:
+                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1) == 0:
+                        self.pl.updatePlayer(5, self.collision_map)
+                        self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
+                # move SW
+                elif moveDown and moveRight and not moveUp and not moveLeft:
+                    if self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1) == 0:
+                        self.pl.updatePlayer(6, self.collision_map)
+                        self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
+
+
+                # restore magic
                 if not magic_cast and self.player_moved == True:
                     self.pl.restore_magic(self.pl.magic_restore)
                     
