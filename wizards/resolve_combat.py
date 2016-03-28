@@ -6,5 +6,8 @@ class CombatResolver():
         pass
 
     def resolve_player_hit(self, player, monster):
-        pass
         # TODO Create combat system
+        dmg = player.get_weapon_damage()
+        monster.take_damage(dmg)
+        return dmg
+

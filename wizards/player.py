@@ -94,4 +94,10 @@ class Player(pygame.sprite.Sprite):
     def set_current_weapon(self, weapon):
         if weapon.equipment:
             self.hand_weapon = weapon
+
+    def get_weapon_damage(self):
+        if self.hand_weapon is not None:
+            return self.hand_weapon.max_damage
+        else:
+            return 0
  

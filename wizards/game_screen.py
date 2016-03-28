@@ -262,6 +262,7 @@ class GameScreen(object):
             if mons.dead == True:
                 kill_list.append(mons)
                 self.collision_map[mons.y][mons.x] = 0
+                self.monster_map[mons.y][mons.x] = 0
                 dgfx = wizards.dead_gfx.DeadGraphic(mons.x, mons.y)
                 self.dead_gfx.add(dgfx)
         
@@ -430,6 +431,7 @@ class GameScreen(object):
                                         # take damage
                                         dmg = random.randrange(1,self.pl.cur_spell.damage)
                                         monster.take_damage(dmg)
+                                        # create damage graphic
                                         dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
                                         self.dmg_list.append(dm_token)
 
@@ -489,19 +491,50 @@ class GameScreen(object):
                         self.pl.updatePlayer(0,self.collision_map)
                         self.player_moved = True
                     # TODO Add hand to hand combat to movement
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
                 elif moveDown:
                     if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
                         self.pl.updatePlayer(2,self.collision_map)
+                        self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
                         self.player_moved = True
                 elif moveLeft:
                     if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
                         self.pl.updatePlayer(3,self.collision_map)
                         self.player_moved = True
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
                 elif moveRight:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
                         self.pl.updatePlayer(1,self.collision_map)
                         self.player_moved = True
-                
+                    else:
+                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
+                        mons = self.get_monster_by_id(mid)
+                        combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                        self.dmg_list.append(dm_token)
+                        self.player_moved = True
                 if not magic_cast and self.player_moved == True:
                     self.pl.restore_magic(self.pl.magic_restore)
                     
