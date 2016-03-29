@@ -218,7 +218,7 @@ class LoadingScreen(object):
     def get_player_start(self):
         l = []
         y = wizards.constants.HEIGHT - 2
-        for x in range(wizards.constants.WIDTH):
+        for x in range(3, wizards.constants.WIDTH - 3):
             if self.c_map[y][x] == 0:
                 if self.get_cur_region(x,y) == self.max_region:
                     tup = (x,y)
@@ -263,7 +263,7 @@ class LoadingScreen(object):
         ret_list = []
         l = []
         y = 1
-        for x in range(wizards.constants.WIDTH):
+        for x in range(4, wizards.constants.WIDTH - 4):
             if self.c_map[y][x] == 0:
                 if self.get_cur_region(x,y) == self.max_region:
                     tup = (x,y)

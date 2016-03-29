@@ -1,4 +1,4 @@
-import pygame, os, pickle
+import pygame, os
 from wizards.constants import *
 import wizards.loading_screen, wizards.constants, wizards.utils
 
@@ -10,18 +10,32 @@ class ExitScreen(object):
         self.level_num = level_num
         self.next_level = level_num + 1
 
+        # TODO Work out more efficient way of saving player - JSON?
         #save player
         self.player.image = None
+        print(vars(self.player))
+        print("LENNY=" + str(len(self.player.inventory)))
+        for item in self.player.inventory:
+            item.prepare_to_store()
+            print(vars(item))
+            #json_string = json.dumps(item, indent=4)
+            #print(json_string)
+
+
         if os.path.isfile(wizards.constants.PL_FILE):
             os.remove(wizards.constants.PL_FILE)
+        # remove images
+        for item in self.player.inventory:
+            item.image = None
+
         wizards.utils.save_object(self.player, wizards.constants.PL_FILE)
 
         #save levels information
         level_information = {}
         if os.path.isfile(wizards.constants.LEVEL_FILE):
-            f = open(wizards.constants.LEVEL_FILE, 'rb')
-            level_information = pickle.load(f)
-            f.close()
+            #f = open(wizards.constants.LEVEL_FILE, 'rb')
+            level_information = wizards.utils.load_zip(wizards.constants.LEVEL_FILE)
+            #f.close()
         level_information[self.level_num] = wizards.constants.NOW
 
         wizards.utils.save_object(level_information, wizards.constants.LEVEL_FILE)

@@ -42,11 +42,12 @@ class GameScreen(object):
         px = pl_start[0]
         py = pl_start[1]
 
+        self.player_sprite = pygame.sprite.Group()
+
         # if player file exists load, if not create
         if os.path.isfile(wizards.constants.PL_FILE):
-            f = open(wizards.constants.PL_FILE, 'rb')
-            self.pl = pickle.load(f)
-            f.close()
+            #f = open(wizards.constants.PL_FILE, 'rb')
+            self.pl = wizards.utils.load_zip(wizards.constants.PL_FILE)
             self.pl.x = px
             self.pl.y = py
             self.pl.init_image()
@@ -55,11 +56,12 @@ class GameScreen(object):
             namer = wizards.name_maker.NameMaker()
             player_name = namer.generate_name()
             self.pl = wizards.player.Player(px, py, player_name)
-            sword = self.im.add_sword_to_character(self.pl, 0, None)
+            sword = self.im.add_sword_to_character()
+            self.pl.add_item_to_inventory(sword)
             self.pl.set_current_weapon(sword)
 
 
-        self.all_sprite_list.add(self.pl)
+        self.player_sprite.add(self.pl)
         self.player_moved = False
 
 
@@ -242,6 +244,7 @@ class GameScreen(object):
         
         # treasure sprites
         self.treasure_sprites.draw(screen)
+        self.player_sprite.draw(screen)
         # self.temp_sprites.draw(screen)
                 
         #pop up box
@@ -335,7 +338,7 @@ class GameScreen(object):
                     moveLeft = True
                     moveDown = False
                     moveRight = False
-                elif e.key == pygame.K_x:
+                elif e.key == pygame.K_x or e.key == pygame.K_s:
                     moveUp = False
                     moveDown = True
                 elif e.key == pygame.K_a:

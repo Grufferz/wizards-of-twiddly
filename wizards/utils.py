@@ -1,4 +1,4 @@
-import pickle
+import pickle, gzip
 
 def get_line(start, end):
     x1, y1 = start
@@ -39,6 +39,13 @@ def get_line(start, end):
     
     return points
 
+
 def save_object(obj, filename):
-    with open(filename, 'wb') as output:
+    with gzip.open(filename, 'wb') as output:
         pickle.dump(obj, output, 2)
+
+
+def load_zip(filename):
+    with gzip.open(filename, 'rb') as f:
+        loaded = pickle.load(f)
+        return loaded

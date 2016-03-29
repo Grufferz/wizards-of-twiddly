@@ -29,15 +29,15 @@ class MonsterGenerator():
             y = p[1]
             if roll <= 3:
                 ret_monster = wizards.orc.Orc(self.monster_count, x, y, "Orc", level_roll, m_type)
-                sword = im.add_sword_to_character(ret_monster, 0, 1)
+                sword = im.add_sword_to_character()
                 ret_monster.current_weapon = sword
             elif roll > 3 and roll < 6:
                 ret_monster = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit", level_roll, m_type)
-                sword = im.add_sword_to_character(ret_monster, 0, 1)
+                sword = im.add_sword_to_character()
                 ret_monster.current_weapon = sword
             elif roll == 6:
                 ret_monster = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton", level_roll, m_type)
-                sword = im.add_sword_to_character(ret_monster, 0, 1)
+                sword = im.add_sword_to_character()
                 ret_monster.current_weapon = sword
             elif roll > 6:
                 ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", level_roll, m_type)

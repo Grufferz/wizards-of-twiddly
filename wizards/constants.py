@@ -84,8 +84,8 @@ GOLD = 1
 TRAP = 3
 WEAPON = 2
 
-PL_FILE = "pl.dat"
-LEVEL_FILE = "lev.dat"
+PL_FILE = "pl.gz"
+LEVEL_FILE = "lev.gz"
 
 
 
