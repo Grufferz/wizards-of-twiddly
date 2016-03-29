@@ -2,7 +2,7 @@ import pygame, os, random
 import wizards.constants
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self,x,y):
+    def __init__(self,x,y, name):
         super().__init__()
         self.image = pygame.image.load(os.path.join("data", "player_blank2.png")).convert()
         self.rect = self.image.get_rect()
@@ -10,8 +10,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = y * wizards.constants.CHAR_SIZE
         self.x = x
         self.y = y
+        self.name = name
         self.orig_hp = random.randrange(10,20) + 10
-        self.hp = self.orig_hp         
+        self.hp = self.orig_hp
         self.max_magic = 50
         self.magic = self.max_magic
         self.magic_restore = 2
@@ -23,6 +24,7 @@ class Player(pygame.sprite.Sprite):
         self.cur_spell = self.spell_list[0]
         self.spell_index = 0
         self.inventory = []
+        self.gold = 0
         self.hand_weapon = None
         self.current_armour = None
         self.ac = 9
@@ -31,9 +33,9 @@ class Player(pygame.sprite.Sprite):
         self.xp = 0
         self.level = 1
         self.carry_weight = 0
-        
+
     def updatePlayer(self,direction,col_map):
-        
+
         new_x = self.x
         new_y = self.y
         if direction == 0:
@@ -56,16 +58,16 @@ class Player(pygame.sprite.Sprite):
         elif direction == 7:
             new_x = self.x - 1
             new_y = self.y - 1
-        
+
         if self.is_valid_move(new_x, new_y, col_map):
             #col_map[self.y][self.x] = 0
             #col_map[new_y][new_x] = 1
             self.x = new_x
             self.y = new_y
-            
+
         self.rect.x = self.x * wizards.constants.CHAR_SIZE
         self.rect.y = self.y * wizards.constants.CHAR_SIZE
-        
+
     def is_valid_move(self, x, y, col_map):
         if x < 0 or y < 0 or x >= wizards.constants.WIDTH or y >= wizards.constants.HEIGHT:
             return False
@@ -73,31 +75,31 @@ class Player(pygame.sprite.Sprite):
             return True
         else:
             return False
-        
+
     def get_pos_tuple(self):
         return (self.x, self.y)
-    
+
     def can_cast_spell(self, cost):
         return self.magic >= cost
-    
+
     def deplete_magic(self, cost):
         self.magic -= cost
         if self.magic < 0:
             self.magic = 0
-            
+
     def get_magic_percent(self):
         ret_p = int((self.magic / self.max_magic) * 100)
         return ret_p
-    
+
     def restore_magic(self, m):
         self.magic += m
         if self.magic > self.max_magic:
             self.magic = self.max_magic
-            
+
     def get_hp_percent(self):
         ret_p = int((self.hp / self.orig_hp) * 100)
-        return ret_p        
-    
+        return ret_p
+
     def take_damage(self, dmg):
         self.hp -= dmg
         if self.hp < 1:
@@ -120,11 +122,17 @@ class Player(pygame.sprite.Sprite):
         self.xp += amount
 
     def add_item_to_inventory(self, item):
-        if item.itemname == "Gold":
-            for itm in self.inventory:
-                if itm.itemname == "Gold":
-                    itm.value += item.value
+        if item.type == wizards.constants.GOLD:
+            #for itm in self.inventory:
+             #   if itm.type == wizards.constants.GOLD:
+              #      itm.value += item.value
+            self.gold += item.value
         else:
             self.carry_weight += item.weight
             self.inventory.append(item)
- 
+        self.get_gold_amount()
+
+    def get_gold_amount(self):
+        return self.gold
+
+

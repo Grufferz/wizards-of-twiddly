@@ -1,10 +1,12 @@
 
-import pygame, random
+import pygame, random, time
 from wizards import *
 
 def main():
     pygame.init()
-    random.seed()
+    now = int(time.time())
+    print(str(now))
+    random.seed(now)
     screen = pygame.display.set_mode(constants.SCREENSIZE)
     timer = pygame.time.Clock()
     pygame.display.set_caption("The Wizards Of Twiddly")

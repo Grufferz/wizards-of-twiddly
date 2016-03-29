@@ -37,7 +37,6 @@ class CombatResolver():
                 i = 6
             xp = self.xp_table[i]
             xp *= monster.xp_mod
-            print("XP=" + str(xp))
             player.add_xp(xp)
         return dmg
 

@@ -41,14 +41,17 @@ class GameScreen(object):
 
         px = pl_start[0]
         py = pl_start[1]
-        self.pl = wizards.player.Player(px,py)
+        namer = wizards.name_maker.NameMaker()
+        player_name = namer.generate_name()
+        self.pl = wizards.player.Player(px, py, player_name)
         sword = self.im.add_sword_to_character(self.pl, 0, None)
         self.pl.set_current_weapon(sword)
         #self.collision_map[py][px] = 1
         self.all_sprite_list.add(self.pl)
         self.player_moved = False
-        # TODO Create entry doorway behind player
+        # TODO If player leaves map
         self.special_zones = special_zones
+        print(str(self.special_zones))
         
         self.cursor_line = []
         self.cline2 = []
@@ -75,10 +78,8 @@ class GameScreen(object):
         self.treasure_sprites = pygame.sprite.Group()
         self.treasure_locations = treasure_locations
         self.treasure_list = []
+        # TODO Different treasure
         self.set_treasure()
-        #self.get_item_by_id(0)
-
-
 
         self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
@@ -92,16 +93,8 @@ class GameScreen(object):
         self.dead_gfx = pygame.sprite.Group()
         #self.charm_gfx = pygame.sprite.Group()
         
-  
-        
         self.show_all_monsters = False
-        
-        #for y in range(constants.HEIGHT):
-            #for x in range(constants.WIDTH):
-                ###print(str(y) + "_" + str(x))
-                #if self.light.lit(x,y):
-                    #print(str(self.light.lit(x,y)))   
-        #self.light.print_map()
+
         
     def render(self, screen):
         screen.fill(wizards.constants.BLACK)
@@ -531,8 +524,11 @@ class GameScreen(object):
                 # move up
                 if moveUp and not moveLeft and not moveRight and not moveDown:
                     if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
-                        self.pl.updatePlayer(0,self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x, self.pl.y-1):
+                            self.pl.updatePlayer(0,self.collision_map)
+                            self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
                         mons = self.get_monster_by_id(mid)
@@ -544,8 +540,9 @@ class GameScreen(object):
                 # move down
                 elif moveDown and not moveLeft and not moveRight and not moveUp:
                     if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
-                        self.pl.updatePlayer(2,self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
+                            self.pl.updatePlayer(2,self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -557,8 +554,9 @@ class GameScreen(object):
                 # move left
                 elif moveLeft and not moveUp and not moveDown and not moveRight:
                     if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
-                        self.pl.updatePlayer(3,self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
+                            self.pl.updatePlayer(3,self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
@@ -570,8 +568,9 @@ class GameScreen(object):
                 # move right
                 elif moveRight and not moveUp and not moveDown and not moveLeft:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
-                        self.pl.updatePlayer(1,self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
+                            self.pl.updatePlayer(1,self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
@@ -583,8 +582,9 @@ class GameScreen(object):
                 # move NW
                 elif moveRight and moveUp and not moveDown and not moveLeft:
                     if self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1) == 0:
-                        self.pl.updatePlayer(7, self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
+                            self.pl.updatePlayer(7, self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
@@ -596,8 +596,9 @@ class GameScreen(object):
                 # move NE
                 elif moveLeft and moveUp and not moveDown and not moveRight:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1) == 0:
-                        self.pl.updatePlayer(4, self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
+                            self.pl.updatePlayer(4, self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
@@ -609,8 +610,9 @@ class GameScreen(object):
                 # move SE
                 elif moveDown and moveLeft and not moveUp and not moveRight:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1) == 0:
-                        self.pl.updatePlayer(5, self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
+                            self.pl.updatePlayer(5, self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -622,8 +624,9 @@ class GameScreen(object):
                 # move SW
                 elif moveDown and moveRight and not moveUp and not moveLeft:
                     if self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1) == 0:
-                        self.pl.updatePlayer(6, self.collision_map)
-                        self.player_moved = True
+                        if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
+                            self.pl.updatePlayer(6, self.collision_map)
+                            self.player_moved = True
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -1092,6 +1095,14 @@ class GameScreen(object):
         monster = self.get_monster_by_id(monster_id)
         resolver = wizards.CombatResolver()
         # TODO Melee combat for monsters
+
+    def is_in_exit_zone(self, x, y):
+        tup = (y, x)
+        if tup in self.special_zones:
+            return True
+        else:
+            return False
+
 
 
 

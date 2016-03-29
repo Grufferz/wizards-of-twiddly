@@ -3,12 +3,13 @@ import wizards.constants
 
 class InventoryObject(pygame.sprite.Sprite):
 
-    def __init__(self, item_id, x, y, itemname, equipment=False, owner=None, value=None):
+    def __init__(self, item_id, x, y, itemname, type, equipment=False, owner=None, value=None):
         super().__init__()
         self.item_id = item_id
         self.x = x
         self.y = y
         self.itemname = itemname
+        self.type = type
         self.value = value
         self.equipment = equipment
         self.owner = owner
@@ -22,8 +23,8 @@ class InventoryObject(pygame.sprite.Sprite):
 
 class Gold(InventoryObject):
 
-    def __init__(self, item_id, x, y, itemname, equipment, owner, value):
-        super().__init__(item_id, x, y, itemname, equipment, owner, value)
+    def __init__(self, item_id, x, y, itemname, type, equipment, owner, value):
+        super().__init__(item_id, x, y, itemname, type, equipment, owner, value)
         self.image = pygame.image.load(os.path.join("data", "yellow.png")).convert()
         self.rect = self.image.get_rect()
         self.rect.x = x * wizards.constants.CHAR_SIZE
@@ -33,8 +34,8 @@ class Gold(InventoryObject):
 
 class Sword(InventoryObject):
 
-    def __init__(self, item_id, x, y, itemname, equipment, owner, value, adjuster):
-        super().__init__(item_id, x, y, itemname, equipment, owner, value)
+    def __init__(self, item_id, x, y, itemname, type, equipment, owner, value, adjuster):
+        super().__init__(item_id, x, y, itemname, type, equipment, owner, value)
         self.image = pygame.image.load(os.path.join("data", "yellow.png")).convert()
         self.adjuster = adjuster
         self.rect = self.image.get_rect()

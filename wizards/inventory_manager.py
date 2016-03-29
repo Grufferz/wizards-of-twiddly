@@ -15,7 +15,7 @@ class InventoryManager():
             value = random.randrange(5)+3
         if owner is not None:
             owner = owner
-        gold = wizards.inventory_object.Gold(self._itemcount, x, y, name, False, owner, value)
+        gold = wizards.inventory_object.Gold(self._itemcount, x, y, name, wizards.constants.GOLD, False, owner, value)
         t_map[y][x] = self._itemcount
         self._itemcount += 1
         return gold
@@ -24,7 +24,7 @@ class InventoryManager():
         name = "Sword"
         if value is None:
             value = random.randrange(2,7)
-        sword = wizards.inventory_object.Sword(self._itemcount, owner.x, owner.y, name, True, owner, value, adjuster)
+        sword = wizards.inventory_object.Sword(self._itemcount, owner.x, owner.y, name, wizards.constants.WEAPON, True, owner, value, adjuster)
         self._itemcount += 1
         return sword
 
