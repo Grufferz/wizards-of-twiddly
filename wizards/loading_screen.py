@@ -4,9 +4,12 @@ class LoadingScreen(object):
     
     def __init__(self,level):
         super(LoadingScreen, self).__init__()
+        random.seed(wizards.constants.NOW)
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 32)
-        
+
+        global now
+        print(str(wizards.constants.NOW))
         self.bm = wizards.building_maker.BuildingsMaker(wizards.constants.WIDTH,wizards.constants.HEIGHT)
         self.bm.build_map(wizards.constants.BUILDINGS)
         self.buildings = None
@@ -86,7 +89,7 @@ class LoadingScreen(object):
             self.treasure_locations = self.wall_test()
             self.pl_start = self.get_player_start()
             #self.special_zones += self.carve_exit()
-            # TODO create exits for player to other levels
+
             self.special_zones = self.carve_door(self.pl_start[0], self.pl_start[1])
             self.special_zones += self.carve_exit()
             # self.print_map(self.c_map)
@@ -248,11 +251,11 @@ class LoadingScreen(object):
         self.buildings[y + 1][x - 2] = 0
         self.buildings[y + 1][x + 2] = 0
 
-        ret_list.append((x,y+1))
-        ret_list.append((x-1,y+1))
-        ret_list.append((x-2,y+1))
-        ret_list.append((x+1,y+1))
-        ret_list.append((x+2,y+1))
+        ret_list.append((y+1, x))
+        ret_list.append((y+1, x-1))
+        ret_list.append((y+1, x-2))
+        ret_list.append((y+1, x+1))
+        ret_list.append((y+1, x+2))
 
         return ret_list
 

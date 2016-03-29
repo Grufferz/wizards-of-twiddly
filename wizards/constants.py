@@ -1,3 +1,7 @@
+import time
+
+NOW = int(time.time())
+
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 BROWN = (29,13,2)
@@ -79,5 +83,10 @@ LAIR = 0
 GOLD = 1
 TRAP = 3
 WEAPON = 2
+
+PL_FILE = "pl.dat"
+LEVEL_FILE = "lev.dat"
+
+
 
 

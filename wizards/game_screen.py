@@ -1,4 +1,4 @@
-import pygame, random, math
+import pygame, random, math, os, pickle
 import wizards.constants
 import time
 
@@ -6,6 +6,7 @@ class GameScreen(object):
     
     def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level, pl_start, special_zones):
         super(GameScreen, self).__init__()
+        random.seed(wizards.constants.NOW)
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 28)
         self.font1 = pygame.font.SysFont('Arial', 20)
@@ -37,21 +38,32 @@ class GameScreen(object):
         #inventory manager
         self.im = wizards.inventory_manager.InventoryManager()
         
-        # pl_pos = self.get_player_start()
-
+        # PLAYER INIT
         px = pl_start[0]
         py = pl_start[1]
-        namer = wizards.name_maker.NameMaker()
-        player_name = namer.generate_name()
-        self.pl = wizards.player.Player(px, py, player_name)
-        sword = self.im.add_sword_to_character(self.pl, 0, None)
-        self.pl.set_current_weapon(sword)
-        #self.collision_map[py][px] = 1
+
+        # if player file exists load, if not create
+        if os.path.isfile(wizards.constants.PL_FILE):
+            f = open(wizards.constants.PL_FILE, 'rb')
+            self.pl = pickle.load(f)
+            f.close()
+            self.pl.x = px
+            self.pl.y = py
+            self.pl.init_image()
+        else:
+            # create player
+            namer = wizards.name_maker.NameMaker()
+            player_name = namer.generate_name()
+            self.pl = wizards.player.Player(px, py, player_name)
+            sword = self.im.add_sword_to_character(self.pl, 0, None)
+            self.pl.set_current_weapon(sword)
+
+
         self.all_sprite_list.add(self.pl)
         self.player_moved = False
-        # TODO If player leaves map
+
+
         self.special_zones = special_zones
-        print(str(self.special_zones))
         
         self.cursor_line = []
         self.cline2 = []
@@ -474,7 +486,6 @@ class GameScreen(object):
                                 for monster in self.monster_list:
                                     if monster.x == ex_x and monster.y == ex_y and monster.charmable:
                                         ch = self.test_charm(monster.save_magic)
-                                        print(str(ch))
                                         if ch:
                                             #xp = monster.rect.centerx
                                             #yp = monster.rect.centery
@@ -528,7 +539,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(0,self.collision_map)
                             self.player_moved = True
                         else:
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level))
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
                         mons = self.get_monster_by_id(mid)
@@ -543,6 +554,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
                             self.pl.updatePlayer(2,self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -557,6 +570,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
                             self.pl.updatePlayer(3,self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
@@ -571,6 +586,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
                             self.pl.updatePlayer(1,self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
@@ -585,6 +602,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
                             self.pl.updatePlayer(7, self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
@@ -599,6 +618,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
                             self.pl.updatePlayer(4, self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
@@ -613,6 +634,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
                             self.pl.updatePlayer(5, self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -627,6 +650,8 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
                             self.pl.updatePlayer(6, self.collision_map)
                             self.player_moved = True
+                        else:
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
@@ -852,7 +877,6 @@ class GameScreen(object):
     def find_monster_by_loc(self, x, y):
         for monster in self.monster_list:
             if monster.x == x and monster.y == y:
-                print("FOUNDS")
                 return monster
         return None
         

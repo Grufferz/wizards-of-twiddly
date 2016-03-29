@@ -1,3 +1,5 @@
+import pickle
+
 def get_line(start, end):
     x1, y1 = start
     x2, y2 = end
@@ -36,3 +38,7 @@ def get_line(start, end):
         points.reverse()
     
     return points
+
+def save_object(obj, filename):
+    with open(filename, 'wb') as output:
+        pickle.dump(obj, output, 2)

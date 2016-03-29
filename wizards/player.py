@@ -4,10 +4,6 @@ import wizards.constants
 class Player(pygame.sprite.Sprite):
     def __init__(self,x,y, name):
         super().__init__()
-        self.image = pygame.image.load(os.path.join("data", "player_blank2.png")).convert()
-        self.rect = self.image.get_rect()
-        self.rect.x = x * wizards.constants.CHAR_SIZE
-        self.rect.y = y * wizards.constants.CHAR_SIZE
         self.x = x
         self.y = y
         self.name = name
@@ -33,6 +29,13 @@ class Player(pygame.sprite.Sprite):
         self.xp = 0
         self.level = 1
         self.carry_weight = 0
+        self.init_image()
+
+    def init_image(self):
+        self.image = pygame.image.load(os.path.join("data", "player_blank2.png")).convert()
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x * wizards.constants.CHAR_SIZE
+        self.rect.y = self.y * wizards.constants.CHAR_SIZE
 
     def updatePlayer(self,direction,col_map):
 
