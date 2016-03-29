@@ -1,6 +1,7 @@
 import pygame, os
 import wizards.constants
 
+
 class InventoryObject(pygame.sprite.Sprite):
 
     def __init__(self, item_id, x, y, itemname, type, equipment=False, value=None):
@@ -38,7 +39,6 @@ class Gold(InventoryObject):
         self.rect = None
 
 
-
 class Sword(InventoryObject):
 
     def __init__(self, item_id, x, y, itemname, type, equipment, value, adjuster):
@@ -47,7 +47,6 @@ class Sword(InventoryObject):
         self.max_damage = 6
         self.weight = 3
         # TODO Work out weapon damages
-
 
     def init_image(self):
         self.image = pygame.image.load(os.path.join("data", "yellow.png")).convert()

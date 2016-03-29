@@ -9,8 +9,7 @@ class ExitScreen(object):
         self.player = player
         self.level_num = level_num
         self.next_level = level_num + 1
-
-        # TODO Work out more efficient way of saving player - JSON?
+        self.player.game_level = self.next_level
         #save player
         self.player.image = None
         print(vars(self.player))

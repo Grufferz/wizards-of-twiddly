@@ -12,10 +12,7 @@ class Heat(object):
         self.intensity = i
         self.radius = r
         
-        
-        
-        
-        
+
 class BlankObject(object):
     
     def __init__(self, fire=None, heat=None):

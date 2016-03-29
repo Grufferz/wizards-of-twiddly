@@ -8,15 +8,12 @@ class LoadingScreen(object):
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 32)
 
-        global now
-        print(str(wizards.constants.NOW))
         self.bm = wizards.building_maker.BuildingsMaker(wizards.constants.WIDTH,wizards.constants.HEIGHT)
         self.bm.build_map(wizards.constants.BUILDINGS)
         self.buildings = None
         self.buildings_loaded = False
         self.level = level
-        
-        #self.fm = forest_maker.ForestMaker(constants.GLOBAL_W,constants.GLOBAL_H)
+
         self.fm = wizards.forest_maker.ForestMaker(wizards.constants.FWIDTH,wizards.constants.FHEIGHT)
         self.fm.create_basic_forest()
         self.world = None
@@ -35,14 +32,10 @@ class LoadingScreen(object):
         self.total_regions = 0   
         self.largest_region = 0
         self.max_region = 0
-        
-        #self.treasure_map = [[0 for x in range(constants.WIDTH)] for y in range(constants.HEIGHT)]
+
         self.treasure_locations = None
         self.pl_start = None
         self.special_zones = []
-           
-        
-
         
     def render(self, screen):
         screen.fill(wizards.constants.BLACK)
@@ -101,9 +94,7 @@ class LoadingScreen(object):
                     self.manager.go_to(wizards.game_screen.GameScreen(self.world, self.c_map, self.object_map, self.region_map, self.total_regions,
                                                                       self.max_region, self.buildings, self.treasure_locations, self.level,
                                                                       self.pl_start, self.special_zones))
-                    
-    
-    
+
     def create_collision_map(self):
 
         self.c_map = self.fm.return_coll_map()        
@@ -112,8 +103,7 @@ class LoadingScreen(object):
             for x in range(wizards.constants.WIDTH):
                 if self.buildings[y][x] == 1:
                     self.c_map[y][x] = 1       
-        
-        
+
     def populate_objects(self, column):
         #for y in range(constants.FHEIGHT):
         for x in range(wizards.constants.FWIDTH):
@@ -125,8 +115,7 @@ class LoadingScreen(object):
     def setup_objects(self):
         blank_obj = wizards.game_objects.BlankObject()
         self.object_map = [[blank_obj for x in range(wizards.constants.FWIDTH)] for y in range(wizards.constants.FHEIGHT)]
-        
-        
+
     def get_walls(self):
         retlist = []
         for y in range(wizards.constants.HEIGHT):

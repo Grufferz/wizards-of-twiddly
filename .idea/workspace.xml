@@ -8,12 +8,10 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/exit_level_screen.py" afterPath="$PROJECT_DIR$/wizards/exit_level_screen.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/game_objects.py" afterPath="$PROJECT_DIR$/wizards/game_objects.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/game_screen.py" afterPath="$PROJECT_DIR$/wizards/game_screen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/inventory_manager.py" afterPath="$PROJECT_DIR$/wizards/inventory_manager.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/inventory_object.py" afterPath="$PROJECT_DIR$/wizards/inventory_object.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/loading_screen.py" afterPath="$PROJECT_DIR$/wizards/loading_screen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/monster_gen.py" afterPath="$PROJECT_DIR$/wizards/monster_gen.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/player.py" afterPath="$PROJECT_DIR$/wizards/player.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/utils.py" afterPath="$PROJECT_DIR$/wizards/utils.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/title_screen.py" afterPath="$PROJECT_DIR$/wizards/title_screen.py" />
     </list>
     <ignored path="wizards-of-twiddly.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,13 +32,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="wizards.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="wizards.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wizards.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="13" column="42" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
+            <state relative-caret-position="136">
+              <caret line="8" column="58" selection-start-line="8" selection-start-column="58" selection-end-line="8" selection-end-column="58" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="constants.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/constants.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="615">
+              <caret line="87" column="8" selection-start-line="87" selection-start-column="8" selection-end-line="87" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="title_screen.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/title_screen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="391">
+              <caret line="23" column="63" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
+              <folding>
+                <element signature="e#0#17#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="exit_level_screen.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/exit_level_screen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="11" column="48" selection-start-line="11" selection-start-column="48" selection-end-line="11" selection-end-column="48" />
+              <folding>
+                <element signature="e#0#17#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -56,35 +88,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="constants.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/constants.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="87" column="20" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="player.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="714">
-              <caret line="42" column="58" selection-start-line="42" selection-start-column="58" selection-end-line="42" selection-end-column="58" />
+            <state relative-caret-position="425">
+              <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="exit_level_screen.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/wizards/exit_level_screen.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
-              <folding>
-                <element signature="e#0#17#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,11 +103,33 @@
       <file leaf-file-name="game_screen.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/game_screen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="246" column="38" selection-start-line="246" selection-start-column="38" selection-end-line="246" selection-end-column="38" />
+            <state relative-caret-position="238">
+              <caret line="50" column="22" selection-start-line="50" selection-start-column="22" selection-end-line="50" selection-end-column="71" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="loading_screen.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1989">
+              <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#21#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="inventory_manager.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="527">
+              <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -135,18 +167,19 @@
         <option value="$PROJECT_DIR$/wizards/exit_level.py" />
         <option value="$PROJECT_DIR$/wizards/__init__.py" />
         <option value="$PROJECT_DIR$/wizards.py" />
-        <option value="$PROJECT_DIR$/wizards/title_screen.py" />
         <option value="$PROJECT_DIR$/wizards/resolve_combat.py" />
-        <option value="$PROJECT_DIR$/wizards/loading_screen.py" />
-        <option value="$PROJECT_DIR$/wizards/game_objects.py" />
         <option value="$PROJECT_DIR$/wizards/inventory_manager.py" />
         <option value="$PROJECT_DIR$/wizards/monster_gen.py" />
-        <option value="$PROJECT_DIR$/wizards/inventory_object.py" />
-        <option value="$PROJECT_DIR$/wizards/constants.py" />
         <option value="$PROJECT_DIR$/wizards/utils.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/wizards/loading_screen.py" />
+        <option value="$PROJECT_DIR$/wizards/game_objects.py" />
+        <option value="$PROJECT_DIR$/wizards/inventory_object.py" />
+        <option value="$PROJECT_DIR$/wizards/game_screen.py" />
+        <option value="$PROJECT_DIR$/wizards/constants.py" />
         <option value="$PROJECT_DIR$/wizards/player.py" />
         <option value="$PROJECT_DIR$/wizards/exit_level_screen.py" />
-        <option value="$PROJECT_DIR$/wizards/game_screen.py" />
+        <option value="$PROJECT_DIR$/wizards/title_screen.py" />
       </list>
     </option>
   </component>
@@ -254,23 +287,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="resolve_combat" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/wizards" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="wizards-of-twiddly" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wizards/resolve_combat.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
     <configuration default="false" name="name_maker" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -301,6 +317,23 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="wizards-of-twiddly" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wizards/player.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="title_screen" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/wizards" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="wizards-of-twiddly" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/wizards/title_screen.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -442,17 +475,17 @@
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.wizards" />
       <item index="1" class="java.lang.String" itemvalue="Python.level_test" />
-      <item index="2" class="java.lang.String" itemvalue="Python.resolve_combat" />
-      <item index="3" class="java.lang.String" itemvalue="Python.name_maker" />
-      <item index="4" class="java.lang.String" itemvalue="Python.player" />
+      <item index="2" class="java.lang.String" itemvalue="Python.name_maker" />
+      <item index="3" class="java.lang.String" itemvalue="Python.player" />
+      <item index="4" class="java.lang.String" itemvalue="Python.title_screen" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.wizards" />
-        <item index="1" class="java.lang.String" itemvalue="Python.player" />
-        <item index="2" class="java.lang.String" itemvalue="Python.name_maker" />
-        <item index="3" class="java.lang.String" itemvalue="Python.level_test" />
-        <item index="4" class="java.lang.String" itemvalue="Python.resolve_combat" />
+        <item index="1" class="java.lang.String" itemvalue="Python.title_screen" />
+        <item index="2" class="java.lang.String" itemvalue="Python.player" />
+        <item index="3" class="java.lang.String" itemvalue="Python.name_maker" />
+        <item index="4" class="java.lang.String" itemvalue="Python.level_test" />
       </list>
     </recent_temporary>
   </component>
@@ -522,7 +555,14 @@
       <option name="project" value="LOCAL" />
       <updated>1459264077645</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Solved saving problems and added gzip support">
+      <created>1459281561489</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1459281561489</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -597,7 +637,8 @@
     <MESSAGE value="Added entrance and exit" />
     <MESSAGE value="Added exit screen and altered inventory" />
     <MESSAGE value="Added saving and loading" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added saving and loading" />
+    <MESSAGE value="Solved saving problems and added gzip support" />
+    <option name="LAST_COMMIT_MESSAGE" value="Solved saving problems and added gzip support" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -610,22 +651,16 @@
           <url>file://$PROJECT_DIR$/wizards/player.py</url>
           <option name="timeStamp" value="3" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/wizards/title_screen.py</url>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="4" />
+      <option name="time" value="5" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="17" column="72" selection-start-line="17" selection-start-column="68" selection-end-line="17" selection-end-column="72" />
-          <folding>
-            <element signature="e#0#13#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/inventory_object.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -891,14 +926,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/title_screen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="21" selection-start-line="19" selection-start-column="21" selection-end-line="19" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/scene_manager.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -923,14 +950,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/game_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/building_maker.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-102">
@@ -943,14 +962,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="326">
           <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/inventory_object.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="35" column="24" selection-start-line="35" selection-start-column="8" selection-end-line="35" selection-end-column="24" />
           <folding />
         </state>
       </provider>
@@ -973,32 +984,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="21" column="30" selection-start-line="21" selection-start-column="8" selection-end-line="21" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="87" column="20" selection-start-line="87" selection-start-column="20" selection-end-line="87" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="23" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="530">
@@ -1007,42 +992,102 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/player.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="714">
-          <caret line="42" column="58" selection-start-line="42" selection-start-column="58" selection-end-line="42" selection-end-column="58" />
-          <folding>
-            <element signature="e#0#25#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="136">
+          <caret line="8" column="4" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/game_objects.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="14" column="8" selection-start-line="14" selection-start-column="8" selection-end-line="14" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="615">
+          <caret line="87" column="8" selection-start-line="87" selection-start-column="8" selection-end-line="87" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/inventory_object.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="411">
+          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wizards/game_screen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="246" column="38" selection-start-line="246" selection-start-column="38" selection-end-line="246" selection-end-column="38" />
+        <state relative-caret-position="238">
+          <caret line="50" column="22" selection-start-line="50" selection-start-column="22" selection-end-line="50" selection-end-column="71" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards.py">
+    <entry file="file://$PROJECT_DIR$/wizards/player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="42" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
+        <state relative-caret-position="425">
+          <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
           <folding>
-            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wizards/exit_level_screen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        <state relative-caret-position="187">
+          <caret line="11" column="48" selection-start-line="11" selection-start-column="48" selection-end-line="11" selection-end-column="48" />
           <folding>
             <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1989">
+          <caret line="117" column="0" selection-start-line="117" selection-start-column="0" selection-end-line="117" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/title_screen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="23" column="63" selection-start-line="23" selection-start-column="63" selection-end-line="23" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#17#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="58" selection-start-line="8" selection-start-column="58" selection-end-line="8" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>

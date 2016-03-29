@@ -81,8 +81,12 @@ WANDERING = 1
 LAIR = 0
 
 GOLD = 1
-TRAP = 3
 WEAPON = 2
+TRAP = 3
+SCROLL = 4
+ARMOUR = 5
+FOOD = 6
+
 
 PL_FILE = "pl.gz"
 LEVEL_FILE = "lev.gz"

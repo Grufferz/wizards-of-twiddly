@@ -29,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.sight = 40
         self.xp = 0
         self.level = 1
+        self.game_level = 1
         self.carry_weight = 0
         self.image_name = "player_blank2.png"
         self.image = pygame.image.load(os.path.join("data", self.image_name)).convert()

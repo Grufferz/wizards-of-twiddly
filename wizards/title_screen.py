@@ -8,14 +8,22 @@ class TitleScreen(object):
         super(TitleScreen, self).__init__()
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 32)
-        
+        self.continue_game = False
+
     def render(self, screen):
         screen.fill(BLACK)
-        text1 = self.font.render('Wizards!', True, WHITE)
+        text1 = self.font.render('Wizards Of Twiddly!', True, WHITE)
+        screen.blit(text1, (400, 200))
         #TODO Decide between new game or loading old one
-        text2 = self.sfont.render('Press SPACE', True, WHITE)
-        screen.blit(text1, (400,200))
-        screen.blit(text2, (400,300))
+        self.player = None
+        if os.path.isfile(wizards.constants.PL_FILE):
+            self.player = wizards.utils.load_zip(wizards.constants.PL_FILE)
+            text3 = self.sfont.render('Continue With ' + self.player.name + " at Level " + str(self.player.game_level), True, WHITE)
+            screen.blit(text3, (400, 300))
+            self.continue_game = True
+        text2 = self.sfont.render('Press Any Key', True, WHITE)
+
+        screen.blit(text2, (400,400))
     
     def update(self):
         pass
@@ -23,4 +31,7 @@ class TitleScreen(object):
     def handle_events(self, events):
         for e in events:
             if e.type == pygame.KEYDOWN:
-                self.manager.go_to(wizards.loading_screen.LoadingScreen(1))
+                if self.continue_game:
+                    self.manager.go_to(wizards.loading_screen.LoadingScreen(self.player.game_level))
+                else:
+                    self.manager.go_to(wizards.loading_screen.LoadingScreen(1))

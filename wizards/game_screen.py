@@ -25,6 +25,7 @@ class GameScreen(object):
         self.setup_buildings()
         
         self.all_sprite_list = pygame.sprite.Group()
+        self.all_sprite_list.empty()
         self.add_tree_gfx()
         
         self.collision_map = collision
