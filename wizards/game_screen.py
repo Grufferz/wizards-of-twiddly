@@ -1,4 +1,4 @@
-import pygame, random, math, os, pickle
+import pygame, random, math, os
 import wizards.constants
 import time
 
@@ -7,11 +7,13 @@ class GameScreen(object):
     def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level, pl_start, special_zones):
         super(GameScreen, self).__init__()
         random.seed(wizards.constants.NOW)
+        self.fontname = "Imperator.ttf"
         self.font = pygame.font.SysFont('Arial', 56)
         self.sfont = pygame.font.SysFont('Arial', 28)
         self.font1 = pygame.font.SysFont('Arial', 20)
         self.font2 = pygame.font.Font(None, 14)
         self.font3 = pygame.font.Font(None, 20)
+        self.font5 = pygame.font.Font(os.path.join('data', self.fontname), 12)
 
         self.level = level
         self.level_score = random.randrange(1,7) + random.randrange(1,7)
@@ -453,6 +455,7 @@ class GameScreen(object):
                                 rmod = 1
                             else:
                                 rmod = -1
+                            # TODO Is this miss correct?
                             tx += (hmod_x * rmod)
                             ty += (hmod_y * rmod)
                             
@@ -1097,7 +1100,7 @@ class GameScreen(object):
             top = (self.pl.y * wizards.constants.CHAR_SIZE) + wizards.constants.SMALL_BOX_GUTTER
 
         pygame.draw.rect(scr, wizards.constants.WHITE, (right, top, wizards.constants.MSG_W, wizards.constants.MSG_H))
-        d_text = self.font3.render(self.small_message, True, wizards.constants.BLACK)
+        d_text = self.font5.render(self.small_message, True, wizards.constants.BLACK)
         scr.blit(d_text, (right + wizards.constants.SMALL_BOX_GUTTER, top + 8))
 
     def display_msg_box(self, scr, q, msg):

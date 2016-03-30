@@ -1,12 +1,16 @@
-import pygame, random
+import pygame, random, os
 import wizards.building_maker, wizards.forest_maker, wizards.game_objects, wizards.my_queue, wizards.game_screen
+
+
 class LoadingScreen(object):
     
     def __init__(self,level):
         super(LoadingScreen, self).__init__()
         random.seed(wizards.constants.NOW)
-        self.font = pygame.font.SysFont('Arial', 56)
-        self.sfont = pygame.font.SysFont('Arial', 32)
+        self.fontname = "Imperator.ttf"
+        self.font = pygame.font.Font(os.path.join('data', self.fontname), 60)
+        #self.sfont = pygame.font.SysFont('Arial', 32)
+        self.font2 = pygame.font.Font(os.path.join('data', self.fontname), 36)
 
         self.bm = wizards.building_maker.BuildingsMaker(wizards.constants.WIDTH,wizards.constants.HEIGHT)
         self.bm.build_map(wizards.constants.BUILDINGS)
@@ -42,15 +46,15 @@ class LoadingScreen(object):
         text5 = self.font.render('Loading Level ' + str(self.level), True, wizards.constants.WHITE)
         text1 = self.font.render('Loading Map: ' + str(self.f_count) + "%", True, wizards.constants.WHITE)
         
-        text2 = self.sfont.render('Press SPACE', True, wizards.constants.WHITE)
+        text2 = self.font2.render('Press SPACE', True, wizards.constants.WHITE)
         screen.blit(text5, (400,100))
         screen.blit(text1, (400,200))
         if self.finished:
             o_l_p = int((self.c / wizards.constants.FHEIGHT) * 100)
-            text3 = self.sfont.render('Loading Objects: ' + str(o_l_p) + "%", True, wizards.constants.WHITE)
+            text3 = self.font2.render('Loading Objects: ' + str(o_l_p) + "%", True, wizards.constants.WHITE)
             screen.blit(text3, (400,300))
         if self.finished and self.objects_loaded:
-            text4 = self.sfont.render('Processing Map', True, wizards.constants.WHITE)
+            text4 = self.font2.render('Processing Map', True, wizards.constants.WHITE)
             screen.blit(text4, (400,400))
         if self.finished and self.objects_loaded and self.regions_loaded:
             screen.blit(text2, (400,550))

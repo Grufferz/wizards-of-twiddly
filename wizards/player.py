@@ -197,4 +197,6 @@ class Player(pygame.sprite.Sprite):
                 msg = self.inventory[self.item_index].use_object()
                 if self.inventory[self.item_index].uses > 0:
                     self.remove_current_item()
+                if self.inventory[self.item_index].weapon:
+                    self.set_current_weapon(self.inventory[self.item_index])
         return msg

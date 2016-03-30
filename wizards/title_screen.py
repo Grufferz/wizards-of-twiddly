@@ -2,12 +2,20 @@ import pygame, os
 from wizards.constants import *
 import wizards.loading_screen, wizards.constants
 
+# free font from: http://www.1001freefonts.com/imperator.font
+
 class TitleScreen(object):
     
     def __init__(self):
         super(TitleScreen, self).__init__()
-        self.font = pygame.font.SysFont('Arial', 56)
-        self.sfont = pygame.font.SysFont('Arial', 32)
+        self.fontname = 'Imperator.ttf'
+        #self.font = pygame.font.SysFont('Arial', 56)
+        #self.sfont = pygame.font.SysFont('Arial', 32)
+
+        self.font = pygame.font.Font(os.path.join('data', self.fontname), 60)
+        self.sfont = pygame.font.Font(os.path.join('data', self.fontname), 36)
+
+
         self.continue_game = False
 
     def render(self, screen):
