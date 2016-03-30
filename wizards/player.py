@@ -52,7 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.image = None
         self.rect = None
 
-    def updatePlayer(self,direction,col_map):
+    def update_player(self, direction, col_map):
 
         new_x = self.x
         new_y = self.y
@@ -85,7 +85,6 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x = self.x * wizards.constants.CHAR_SIZE
         self.rect.y = self.y * wizards.constants.CHAR_SIZE
-
 
     def is_valid_move(self, x, y, col_map):
         if x < 0 or y < 0 or x >= wizards.constants.WIDTH or y >= wizards.constants.HEIGHT:
@@ -139,7 +138,8 @@ class Player(pygame.sprite.Sprite):
 
     def get_weapon_damage(self):
         if self.hand_weapon is not None:
-            return self.hand_weapon.max_damage
+            d = self.hand_weapon.max_damage + self.hand_weapon.adjuster
+            return d
         else:
             return 0
 
@@ -180,5 +180,21 @@ class Player(pygame.sprite.Sprite):
         return self.inventory[self.item_index]
 
     def get_current_item_string(self):
-        return self.inventory[self.item_index].itemname
+        return self.inventory[self.item_index].get_description()
 
+    def remove_current_item(self):
+        self.inventory.remove(self.inventory[self.item_index])
+        self.item_index = 0
+        if len(self.inventory) > 0:
+            self.current_item = self.inventory[self.item_index]
+        else:
+            self.current_item = None
+
+    def use_current_item(self):
+        msg = ""
+        if len(self.inventory) > 0:
+            if self.inventory[self.item_index].use:
+                msg = self.inventory[self.item_index].use_object()
+                if self.inventory[self.item_index].uses > 0:
+                    self.remove_current_item()
+        return msg

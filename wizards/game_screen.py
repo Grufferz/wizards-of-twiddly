@@ -11,9 +11,8 @@ class GameScreen(object):
         self.sfont = pygame.font.SysFont('Arial', 28)
         self.font1 = pygame.font.SysFont('Arial', 20)
         self.font2 = pygame.font.Font(None, 14)
-        self.font3 = pygame.font.Font(None, 18)        
+        self.font3 = pygame.font.Font(None, 20)
 
-        # TODO Add level saving
         self.level = level
         self.level_score = random.randrange(1,7) + random.randrange(1,7)
         print("SCORE=" + str(self.level_score))
@@ -92,6 +91,9 @@ class GameScreen(object):
         self.mouse_down = False
         
         self.pop_up_visible = False
+        self.small_pop_up_visible = False
+        self.small_message = ""
+        self.message_countdown = 0
         
         # setup lit_map
         self.light = wizards.light_map.LightMap(self.collision_map)
@@ -192,11 +194,11 @@ class GameScreen(object):
         screen.blit(text5, (wizards.constants.MSG_GUT_3,wizards.constants.MSGBOX_TOP+8))
 
         # Display item in square
-        itemid = self.cell_contains_item(self.pl.x, self.pl.y)
-        if itemid > 0:
-            item = self.get_item_by_id(itemid)
-            text6 = self.font1.render('Item: ' + item.itemname, True, wizards.constants.BLACK)
-            screen.blit(text6, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+8))
+        #itemid = self.cell_contains_item(self.pl.x, self.pl.y)
+        #if itemid > 0:
+        #    item = self.get_item_by_id(itemid)
+        #    text6 = self.font1.render('Item: ' + item.itemname, True, wizards.constants.BLACK)
+        #    screen.blit(text6, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+8))
         
         #magic box
         pygame.draw.rect(screen, wizards.constants.MAG_DB, (wizards.constants.MB_BACK_L,wizards.constants.MB_BACK_T,wizards.constants.MB_BACK_W,wizards.constants.MB_BACK_H))
@@ -266,6 +268,9 @@ class GameScreen(object):
             player_quad = self.select_quadrant(self.pl.rect.x, self.pl.rect.y)
             
             self.display_msg_box(screen, player_quad, "Hello!")
+
+        if self.small_pop_up_visible:
+            self.display_small_msg_box(screen, "GOIT")
             
         #test for FOV
         #for y in range(constants.FHEIGHT):
@@ -279,6 +284,12 @@ class GameScreen(object):
     
     def update(self):
         self.turn += 1
+
+        if self.message_countdown > 0:
+            self.message_countdown -= 1
+            if self.message_countdown <= 0:
+                self.small_pop_up_visible = False
+                self.small_message = ""
         
         #kill off dead monsters
         kill_list = []
@@ -289,7 +300,7 @@ class GameScreen(object):
                 self.monster_map[mons.y][mons.x] = 0
                 dgfx = wizards.dead_gfx.DeadGraphic(mons.x, mons.y)
                 self.dead_gfx.add(dgfx)
-        
+                self.drop_treasure(mons)
         for kl in kill_list:
             self.monster_list.remove(kl)
             self.monster_sprites.remove(kl)
@@ -370,6 +381,12 @@ class GameScreen(object):
                     moveLeft = False
                     moveDown = True
                     moveRight = True
+                elif e.key == pygame.K_u:
+                    msg = self.pl.use_current_item()
+                    if msg != "":
+                        self.small_message = msg
+                        self.message_countdown = 140
+                        self.small_pop_up_visible = True
                 elif e.key == pygame.K_p:
                     pick_up = True
                 elif e.key == pygame.K_n:
@@ -550,17 +567,14 @@ class GameScreen(object):
                     moveLeft = False
                 elif e.key == pygame.K_p:
                     pick_up = False
-
                     
             if time.time() - 0.5 > lastmovetime:
-
-                # TODO If monster dies, drop treasure
 
                 # move up
                 if moveUp and not moveLeft and not moveRight and not moveDown:
                     if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
                         if not self.is_in_exit_zone(self.pl.x, self.pl.y-1):
-                            self.pl.updatePlayer(0,self.collision_map)
+                            self.pl.update_player(0, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -577,7 +591,7 @@ class GameScreen(object):
                 elif moveDown and not moveLeft and not moveRight and not moveUp:
                     if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
                         if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
-                            self.pl.updatePlayer(2,self.collision_map)
+                            self.pl.update_player(2, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -594,7 +608,7 @@ class GameScreen(object):
                 elif moveLeft and not moveUp and not moveDown and not moveRight:
                     if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
                         if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
-                            self.pl.updatePlayer(3,self.collision_map)
+                            self.pl.update_player(3, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -611,7 +625,7 @@ class GameScreen(object):
                 elif moveRight and not moveUp and not moveDown and not moveLeft:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
-                            self.pl.updatePlayer(1,self.collision_map)
+                            self.pl.update_player(1, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -628,7 +642,7 @@ class GameScreen(object):
                 elif moveRight and moveUp and not moveDown and not moveLeft:
                     if self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1) == 0:
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
-                            self.pl.updatePlayer(7, self.collision_map)
+                            self.pl.update_player(7, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -645,7 +659,7 @@ class GameScreen(object):
                 elif moveLeft and moveUp and not moveDown and not moveRight:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1) == 0:
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
-                            self.pl.updatePlayer(4, self.collision_map)
+                            self.pl.update_player(4, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -662,7 +676,7 @@ class GameScreen(object):
                 elif moveDown and moveLeft and not moveUp and not moveRight:
                     if self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1) == 0:
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
-                            self.pl.updatePlayer(5, self.collision_map)
+                            self.pl.update_player(5, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -679,7 +693,7 @@ class GameScreen(object):
                 elif moveDown and moveRight and not moveUp and not moveLeft:
                     if self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1) == 0:
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
-                            self.pl.updatePlayer(6, self.collision_map)
+                            self.pl.update_player(6, self.collision_map)
                             self.player_moved = True
                         else:
                             self.clean_up()
@@ -702,6 +716,9 @@ class GameScreen(object):
                         self.pl.add_xp(item.value)
                         self.treasure_map[self.pl.y][self.pl.x] = 0
                         self.treasure_sprites.remove(item)
+                        self.small_message = item.get_description()
+                        self.message_countdown = 140
+                        self.small_pop_up_visible = True
 
 
 
@@ -730,8 +747,7 @@ class GameScreen(object):
                 if self.buildings[y][x] == 1:
                     t = wizards.wall.WallSprite(x,y)
                     self.building_sprites.add(t)
-                    
-                    
+
     def get_player_start(self):
         l = []
         #for y in range(constants.HEIGHT):
@@ -1066,8 +1082,23 @@ class GameScreen(object):
         if roll >= 17 or roll > resist:
             return True
         else:
-            return False   
-        
+            return False
+
+    def display_small_msg_box(self, scr, msg):
+
+        if self.pl.x > wizards.constants.WIDTH // 2:
+            right = (self.pl.x * wizards.constants.CHAR_SIZE) - wizards.constants.MSG_W - wizards.constants.SMALL_BOX_GUTTER
+        else:
+            right = (self.pl.x * wizards.constants.CHAR_SIZE) + wizards.constants.SMALL_BOX_GUTTER
+
+        if self.pl.y > wizards.constants.HEIGHT // 2:
+            top = (self.pl.y * wizards.constants.CHAR_SIZE) - wizards.constants.MSG_H - wizards.constants.SMALL_BOX_GUTTER
+        else:
+            top = (self.pl.y * wizards.constants.CHAR_SIZE) + wizards.constants.SMALL_BOX_GUTTER
+
+        pygame.draw.rect(scr, wizards.constants.WHITE, (right, top, wizards.constants.MSG_W, wizards.constants.MSG_H))
+        d_text = self.font3.render(self.small_message, True, wizards.constants.BLACK)
+        scr.blit(d_text, (right + wizards.constants.SMALL_BOX_GUTTER, top + 8))
 
     def display_msg_box(self, scr, q, msg):
   
@@ -1170,6 +1201,36 @@ class GameScreen(object):
         self.treasure_sprites.empty()
         self.temp_sprites.empty()
         self.dead_gfx.empty()
+
+    def drop_treasure(self, mons):
+        percent = random.randrange(100)
+        treasure = None
+        if mons.name == "Orc":
+            if percent < 60:
+                t_val = random.randrange(6) + 1
+                treasure = self.im.add_gold(mons.x,mons.y, self.treasure_map, t_val)
+            elif percent >= 60 and percent < 75:
+                treasure = self.im.add_potion_with_location(mons.x, mons.y, self.treasure_map)
+        elif mons.name == "Bandit":
+            if percent < 5:
+                t_val = random.randrange(100) + 1
+                treasure = self.im.add_gold(mons.x, mons.y, self.treasure_map, t_val)
+            elif percent >= 5 and percent < 8:
+                value_roll = random.randrange(8) + 1
+                if value_roll < 7:
+                    v = 1
+                elif value_roll == 7:
+                    v = 2
+                elif value_roll == 8:
+                    v = -1
+                treasure = self.im.add_sword(mons.x, mons.y, self.treasure_map, v)
+        # TODO add in other objects
+
+        if treasure is not None:
+            self.treasure_sprites.add(treasure)
+            self.treasure_list.append(treasure)
+            self.treasure_map[mons.y][mons.x] = treasure.item_id
+
 
 
 

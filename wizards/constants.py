@@ -30,12 +30,18 @@ CHAR_SIZE = 8
 GLOBAL_W = WIDTH * 3
 GLOBAL_H = HEIGHT * 3
 
+#pop up message box - large one
 MSGBOX_TOP = 656
 MSGBOX_H = 64
 MSGBOX_W = 1280
 MSG_GUT_1 = 16
 MSG_GUT_2 = 256
 MSG_GUT_3 = 256 * 2 + 16
+
+#small pop up box
+MSG_W = 256
+MSG_H = 64
+SMALL_BOX_GUTTER = 32
 
 #magic box
 MB_BACK_L = 960

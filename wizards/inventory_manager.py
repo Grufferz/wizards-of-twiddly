@@ -19,18 +19,28 @@ class InventoryManager():
         self._itemcount += 1
         return gold
 
+    def add_sword(self, x, y, t_ma, adj):
+        name = "Sword"
+        value = (random.randrange(6)+ 1) * 2
+        sword = wizards.inventory_object.Sword(self._itemcount, x, y, name, wizards.constants.WEAPON, True,
+                                               value, adj)
+        self._itemcount += 1
+        return sword
+
     def add_sword_to_character(self, adjuster=None, value=None):
         name = "Sword"
         if adjuster is None:
             adjuster = 0
         if value is None:
             value = random.randrange(2,7)
-        sword = wizards.inventory_object.Sword(self._itemcount, 0, 0, name, wizards.constants.WEAPON, True, value, adjuster)
+        sword = wizards.inventory_object.Sword(self._itemcount, 0, 0, name, wizards.constants.WEAPON, True,
+                                               value, adjuster)
         self._itemcount += 1
         return sword
 
     def add_healing_potion(self):
-        potion = wizards.inventory_object.Potion(self._itemcount, 0, 0, 'Healing Potion', wizards.constants.POTION, True, 1, 1)
+        potion = wizards.inventory_object.Potion(self._itemcount, 0, 0, 'Healing Potion',
+                                                 wizards.constants.POTION, True, 1, 1)
         self._itemcount += 1
         return potion
 

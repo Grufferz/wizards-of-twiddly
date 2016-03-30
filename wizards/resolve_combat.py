@@ -23,7 +23,7 @@ class CombatResolver():
             hd = 0
         if hd > 12:
             hd = 12
-        roll = random.randrange(20) + 1
+        roll = random.randrange(20) + 1 + player.hand_weapon.adjuster
         print(str(roll) + " >> " + str(self.player_attack[hd]))
         if roll >= self.player_attack[hd]:
             dmg = player.get_weapon_damage()
