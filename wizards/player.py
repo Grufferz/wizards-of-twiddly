@@ -20,10 +20,15 @@ class Player(pygame.sprite.Sprite):
         self.spell_list.append(charm)
         self.cur_spell = self.spell_list[0]
         self.spell_index = 0
+
         self.inventory = []
+        self.current_item = None
+        self.item_index = 0
+
         self.gold = 0
         self.hand_weapon = None
         self.current_armour = None
+
         self.ac = 9
         self.dead = False
         self.sight = 40
@@ -114,6 +119,11 @@ class Player(pygame.sprite.Sprite):
         ret_p = int((self.hp / self.orig_hp) * 100)
         return ret_p
 
+    def restore_health(self, amount):
+        self.hp += amount
+        if self.hp > self.orig_hp:
+            self.hp = self.orig_hp
+
     def take_damage(self, dmg):
         self.hp -= dmg
         if self.hp < 1:
@@ -121,6 +131,7 @@ class Player(pygame.sprite.Sprite):
 
     def add_inventory_item(self, item):
         self.inventory.append(item)
+        self.carry_weight += item.weight
 
     def set_current_weapon(self, weapon):
         if weapon.equipment:
@@ -148,4 +159,26 @@ class Player(pygame.sprite.Sprite):
 
     def get_gold_amount(self):
         return self.gold
+
+    def cycle_cur_item_up(self):
+        if len(self.inventory) > 0:
+            next_index = self.item_index + 1
+            if next_index >= len(self.inventory):
+                next_index = 0
+            self.current_item = self.inventory[next_index]
+            self.item_index = next_index
+
+    def cycle_cur_item_down(self):
+        if len(self.inventory) > 0:
+            next_index = self.item_index - 1
+            if next_index < 0:
+                next_index = len(self.inventory)-1
+            self.current_item = self.inventory[next_index]
+            self.item_index = next_index
+
+    def get_current_item(self):
+        return self.inventory[self.item_index]
+
+    def get_current_item_string(self):
+        return self.inventory[self.item_index].itemname
 

@@ -22,6 +22,7 @@ class GameScreen(object):
         self.buildings = bld
         
         self.building_sprites = pygame.sprite.Group()
+        self.building_sprites.empty()
         self.setup_buildings()
         
         self.all_sprite_list = pygame.sprite.Group()
@@ -43,7 +44,9 @@ class GameScreen(object):
         px = pl_start[0]
         py = pl_start[1]
 
+        self.player_sprite = None
         self.player_sprite = pygame.sprite.Group()
+        self.player_sprite.empty()
 
         # if player file exists load, if not create
         if os.path.isfile(wizards.constants.PL_FILE):
@@ -58,6 +61,12 @@ class GameScreen(object):
             player_name = namer.generate_name()
             self.pl = wizards.player.Player(px, py, player_name)
             sword = self.im.add_sword_to_character()
+            sword.set_owner(self.pl)
+            potion = self.im.add_healing_potion()
+            potion.set_owner(self.pl)
+
+            self.pl.add_item_to_inventory(potion)
+            self.pl.current_item = potion
             self.pl.add_item_to_inventory(sword)
             self.pl.set_current_weapon(sword)
 
@@ -163,9 +172,12 @@ class GameScreen(object):
 
         ds = 'Distance: ' + str(d) + "(" + str(d2)+ ")"
         text3 = self.font1.render(ds, True, wizards.constants.BLACK)
+
+        text24 = self.font1.render("Item: " + self.pl.get_current_item_string(), True, wizards.constants.BLACK)
                 
         screen.blit(text1, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+8))
         screen.blit(text2, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+32))
+        screen.blit(text24, (wizards.constants.MSG_GUT_2, wizards.constants.MSGBOX_TOP + 8))
         screen.blit(text3, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+32))
         
         start = self.pl.get_pos_tuple()
@@ -319,7 +331,7 @@ class GameScreen(object):
                 
                 
     def handle_events(self, events):
-        moveLeft = moveRight = moveUp = moveDown = pick_up = False
+        moveLeft = moveRight = moveUp = moveDown = pick_up =  False
         magic_cast = False
         
         for e in events:
@@ -362,6 +374,10 @@ class GameScreen(object):
                     pick_up = True
                 elif e.key == pygame.K_n:
                     self.cycle_spell()
+                elif e.key == pygame.K_LEFTBRACKET:
+                    self.pl.cycle_cur_item_up()
+                elif e.key == pygame.K_RIGHTBRACKET:
+                    self.pl.cycle_cur_item_down()
                 elif e.key == pygame.K_m:
                     self.toggle_msg_box()
                 elif e.key == pygame.K_l:
@@ -469,6 +485,10 @@ class GameScreen(object):
                                         # create damage graphic
                                         dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
                                         self.dmg_list.append(dm_token)
+                                        # if monster dead add xp
+                                        cr = wizards.resolve_combat.CombatResolver()
+                                        xp = cr.get_xp_for_monster(monster.level)
+                                        self.pl.add_xp(xp)
 
                         # charm spell
                         elif self.pl.cur_spell.spell_type == 2:
@@ -543,6 +563,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(0,self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
@@ -559,6 +580,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(2,self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
@@ -575,6 +597,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(3,self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
@@ -591,6 +614,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(1,self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
@@ -607,6 +631,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(7, self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
@@ -623,6 +648,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(4, self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
@@ -639,6 +665,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(5, self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
@@ -655,6 +682,7 @@ class GameScreen(object):
                             self.pl.updatePlayer(6, self.collision_map)
                             self.player_moved = True
                         else:
+                            self.clean_up()
                             self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
@@ -669,6 +697,7 @@ class GameScreen(object):
                     item_id = self.cell_contains_item(self.pl.x, self.pl.y)
                     if item_id > 0:
                         item = self.get_item_by_id(item_id)
+                        item.set_owner(self.pl)
                         self.pl.add_item_to_inventory(item)
                         self.pl.add_xp(item.value)
                         self.treasure_map[self.pl.y][self.pl.x] = 0
@@ -1096,9 +1125,9 @@ class GameScreen(object):
                 placed_treasure.append(loc)
 
         for treasure in placed_treasure:
-            t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
+            #t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
+            t = self.im.add_potion_with_location(treasure[0], treasure[1], self.treasure_map)
             self.treasure_list.append(t)
-            #self.temp_sprites.add(t)
             self.treasure_sprites.add(t)
 
     def cell_contains_monster(self, x, y):
@@ -1130,6 +1159,17 @@ class GameScreen(object):
             return True
         else:
             return False
+
+    def clean_up(self):
+        self.player_sprite.empty()
+        self.all_sprite_list.empty()
+        self.building_sprites.empty()
+        self.monster_sprites.empty()
+        self.magic_sprites.empty()
+        self.fire_sprites.empty()
+        self.treasure_sprites.empty()
+        self.temp_sprites.empty()
+        self.dead_gfx.empty()
 
 
 

@@ -30,15 +30,18 @@ class MonsterGenerator():
             if roll <= 3:
                 ret_monster = wizards.orc.Orc(self.monster_count, x, y, "Orc", level_roll, m_type)
                 sword = im.add_sword_to_character()
+                sword.set_owner(ret_monster)
                 ret_monster.current_weapon = sword
             elif roll > 3 and roll < 6:
                 ret_monster = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit", level_roll, m_type)
                 sword = im.add_sword_to_character()
                 ret_monster.current_weapon = sword
+                sword.set_owner(ret_monster)
             elif roll == 6:
                 ret_monster = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton", level_roll, m_type)
                 sword = im.add_sword_to_character()
                 ret_monster.current_weapon = sword
+                sword.set_owner(ret_monster)
             elif roll > 6:
                 ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", level_roll, m_type)
                 # TODO Add hand weapon for wizards

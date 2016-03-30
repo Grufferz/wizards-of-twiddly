@@ -41,3 +41,8 @@ class CombatResolver():
             player.add_xp(xp)
         return dmg
 
+    def get_xp_for_monster(self, level):
+        if level > 6:
+            level = 6
+        return self.xp_table[level]
+

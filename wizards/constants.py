@@ -86,6 +86,7 @@ TRAP = 3
 SCROLL = 4
 ARMOUR = 5
 FOOD = 6
+POTION = 7
 
 
 PL_FILE = "pl.gz"
