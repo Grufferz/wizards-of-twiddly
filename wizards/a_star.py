@@ -1,4 +1,4 @@
-
+import wizards.my_queue
 
 def heuristic(a,b):
     (x1, y1) = a
@@ -7,7 +7,7 @@ def heuristic(a,b):
 
 def a_star_search(graph, start, goal):
     
-    frontier = my_queue.PriorityQueue()
+    frontier = wizards.my_queue.PriorityQueue()
     frontier.put(start, 0)
     came_from = {}
     cost_so_far = {}
@@ -29,7 +29,9 @@ def a_star_search(graph, start, goal):
                 came_from[next] = current
                 
     
-    return came_from, cost_so_far
+    #return came_from, cost_so_far
+    p = reconstruct_path(came_from, start, goal)
+    return p
 
 def reconstruct_path(came_from, start, goal):
     current = goal

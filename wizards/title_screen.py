@@ -27,11 +27,11 @@ class TitleScreen(object):
         if os.path.isfile(wizards.constants.PL_FILE):
             self.player = wizards.utils.load_zip(wizards.constants.PL_FILE)
             text3 = self.sfont.render('Continue With ' + self.player.name + " at Level " + str(self.player.game_level), True, WHITE)
-            screen.blit(text3, (400, 300))
+            screen.blit(text3, (300, 300))
             self.continue_game = True
         text2 = self.sfont.render('Press Any Key', True, WHITE)
 
-        screen.blit(text2, (400,400))
+        screen.blit(text2, (300,400))
     
     def update(self):
         pass

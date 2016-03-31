@@ -19,6 +19,12 @@ class BaseMonster(pygame.sprite.Sprite):
         self.morale = 6
         self.save_magic = 16
 
+        self.charmable = True
+        self.charmed = False
+        self.charmed_by = None
+        self.charm_duration = 0
+        self.charm_gfx = None
+
         # TODO Monster AI
 
     def get_id(self):
@@ -56,7 +62,7 @@ class BaseMonster(pygame.sprite.Sprite):
             self.dead = True
 
     def get_hp(self, num_of_dice):
-        """GEt initial hitpoints, level * D8"""
+        """Get initial hitpoints, level * D8"""
         total = 0
         for i in range(num_of_dice):
             total += (random.randrange(0,8)+1)

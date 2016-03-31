@@ -14,12 +14,13 @@ class Player(pygame.sprite.Sprite):
         self.magic = self.max_magic
         self.magic_restore = 2
         self.spell_list = []
-        fb = wizards.spells.Spell("Fireball", 1, True, None, 6)
+        fb = wizards.spells.Spell("Fireball", 1, 0, True, None, 6)
         self.spell_list.append(fb)
-        charm = wizards.spells.Spell("Charm", 2, True, None, 3)
+        charm = wizards.spells.Spell("Charm", 2, 0, True, None, 3)
         self.spell_list.append(charm)
         self.cur_spell = self.spell_list[0]
         self.spell_index = 0
+        self.active_spells = []
 
         self.inventory = []
         self.current_item = None
@@ -28,14 +29,18 @@ class Player(pygame.sprite.Sprite):
         self.gold = 0
         self.hand_weapon = None
         self.current_armour = None
+        self.initial_ac = 9
+        self.ac = self.initial_ac
+        self.ac_missiles = self.ac
 
-        self.ac = 9
         self.dead = False
         self.sight = 40
         self.xp = 0
         self.level = 1
         self.game_level = 1
+        self.total_monsters_killed = {}
         self.carry_weight = 0
+
         self.image_name = "player_blank2.png"
         self.image = pygame.image.load(os.path.join("data", self.image_name)).convert()
         self.rect = self.image.get_rect()

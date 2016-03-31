@@ -8,8 +8,7 @@ class MonsterGenerator():
         self.monster_map = mm
         self.level_score = level_score
         self.monster_count = 0
-        
-        
+
     def return_monster_list(self, positions, im, mt):
         
         ret_list = []
@@ -49,23 +48,28 @@ class MonsterGenerator():
             ret_list.append(ret_monster)
         
         return ret_list
-            
-            
     
-    def return_single_monster(self, x, y):
+    def return_single_monster(self, x, y, mt):
+
+        if mt == wizards.constants.WANDERING:
+            m_type = "Wandering"
+        else:
+            m_type = "Lair"
         
         ret_monster = None
         self.monster_count += 1
         roll = random.randrange(0,5) + 1 + self.level
         
         if roll <= 2:
-            ret_monster = wizards.orc.Orc(self.monster_count, x , y, "Orc")
+            ret_monster = wizards.orc.Orc(self.monster_count, x , y, "Orc",m_type)
         elif roll > 2 and roll < 6:
-            ret_monster = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit")
+            ret_monster = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit", m_type)
         elif roll == 6:
-            ret_monster = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton")
+            ret_monster = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton", m_type)
         elif roll > 6:
-            ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard")
+            ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", m_type)
         
         return ret_monster
-    
+
+    def get_number_of_monsters(self):
+        return self.monster_count

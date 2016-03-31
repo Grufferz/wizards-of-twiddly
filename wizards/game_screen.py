@@ -1,6 +1,7 @@
-import pygame, random, math, os
+import pygame, random, math, os, time
 import wizards.constants
-import time
+import wizards.a_star, wizards.my_queue, wizards.square_grid
+
 
 class GameScreen(object):
     
@@ -71,12 +72,15 @@ class GameScreen(object):
             self.pl.add_item_to_inventory(sword)
             self.pl.set_current_weapon(sword)
 
-
+        self.pl.total_monsters_killed[self.level] = 0
         self.player_sprite.add(self.pl)
         self.player_moved = False
 
-
         self.special_zones = special_zones
+        # define how long it should take to get through level
+        self.level_length = self.get_level_path() + 10
+        self.steps_taken = 0
+
         
         self.cursor_line = []
         self.cline2 = []
@@ -91,6 +95,7 @@ class GameScreen(object):
         self.game_turn = 1
         
         self.mouse_down = False
+        self.lastmovetime = time.time()
         
         self.pop_up_visible = False
         self.small_pop_up_visible = False
@@ -101,7 +106,7 @@ class GameScreen(object):
         self.light = wizards.light_map.LightMap(self.collision_map)
         self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)       
         
-        #place treasure
+        # place treasure
         self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.treasure_sprites = pygame.sprite.Group()
         self.treasure_locations = treasure_locations
@@ -109,10 +114,13 @@ class GameScreen(object):
         # TODO Different treasure
         self.set_treasure()
 
+        # setup monsters
+        self.monsters_dead = 0
+        self.total_monsters = 4 + random.randrange(8) + 1 + self.level
         self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
         self.monster_list = []
-        self.init_monsters_2(8)
+        self.init_monsters_2(self.total_monsters)
         
         self.dmg_list = []
 
@@ -122,7 +130,6 @@ class GameScreen(object):
         #self.charm_gfx = pygame.sprite.Group()
         
         self.show_all_monsters = False
-
         
     def render(self, screen):
         screen.fill(wizards.constants.BLACK)
@@ -405,7 +412,7 @@ class GameScreen(object):
                     else:
                         self.show_all_monsters = True
             
-            lastmovetime = time.time() - 1
+            self.lastmovetime = time.time() - 1
             
             mx = 0
             my = 0 
@@ -434,43 +441,47 @@ class GameScreen(object):
                         
                         magic_cast = True
                         self.player_moved = True
-                        
-                        #check accuracy
 
-                        # TODO Add max range to spells
+                        # ranged spells
+                        if self.pl.cur_spell.range is not None:
 
-                        dis = self.get_distance(start[0],start[1],tmp[0],tmp[1])
-                        dis_mod = self.get_distance_mod(dis)
-                        self.accuracy = self.base_accuracy + dis_mod
-                        hit = self.ranged_combat(self.accuracy)
+                            #check accuracy
 
-                        # TODO Abstract ranged combat a bit more
-                        
-                        #if miss change hit location
-                        if not hit:
-                            base_miss = random.randrange(1,4) + dis_mod
-                            hmod_x = base_miss * wizards.constants.CHAR_SIZE
-                            hmod_y = base_miss * wizards.constants.CHAR_SIZE
-                            if random.randrange(10) > 4:
-                                rmod = 1
-                            else:
-                                rmod = -1
-                            # TODO Is this miss correct?
-                            tx += (hmod_x * rmod)
-                            ty += (hmod_y * rmod)
-                            
-                            #get new line
-                            start = self.pl.get_pos_tuple()
-                            nx,ny = self.convert_screen_pos_to_grid(mouse_x,mouse_y)  
-                            end = (nx,ny)
-                            self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
-                            
-                            tmp = self.cursor_line[-1]
-                            tx = tmp[0] * wizards.constants.CHAR_SIZE
-                            ty = tmp[1] * wizards.constants.CHAR_SIZE
-                            
-                        #check what sort of spell
-                        #fireball = 1
+                            # TODO Add max range to spells
+
+                            dis = self.get_distance(start[0],start[1],tmp[0],tmp[1])
+                            dis_mod = self.get_distance_mod(dis)
+                            self.accuracy = self.base_accuracy + dis_mod
+                            hit = self.ranged_combat(self.accuracy)
+
+                            # TODO Abstract ranged combat a bit more
+
+                            #if miss change hit location
+                            if not hit:
+                                base_miss = random.randrange(1,4) + dis_mod
+                                hmod_x = base_miss * wizards.constants.CHAR_SIZE
+                                hmod_y = base_miss * wizards.constants.CHAR_SIZE
+                                if random.randrange(10) > 4:
+                                    rmod = 1
+                                else:
+                                    rmod = -1
+                                # TODO Is this miss correct?
+                                tx += (hmod_x * rmod)
+                                ty += (hmod_y * rmod)
+
+                                #get new line
+                                start = self.pl.get_pos_tuple()
+                                nx,ny = self.convert_screen_pos_to_grid(mouse_x,mouse_y)
+                                end = (nx,ny)
+                                self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
+
+                                tmp = self.cursor_line[-1]
+                                tx = tmp[0] * wizards.constants.CHAR_SIZE
+                                ty = tmp[1] * wizards.constants.CHAR_SIZE
+
+                        # check what sort of spell
+
+                        # fireball = 1
                         if self.pl.cur_spell.spell_type == 1:
                             self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
                             tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
@@ -506,12 +517,16 @@ class GameScreen(object):
                                         dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
                                         self.dmg_list.append(dm_token)
                                         # if monster dead add xp
-                                        cr = wizards.resolve_combat.CombatResolver()
-                                        xp = cr.get_xp_for_monster(monster.level)
-                                        self.pl.add_xp(xp)
+                                        if monster.dead:
+                                            cr = wizards.resolve_combat.CombatResolver()
+                                            xp = cr.get_xp_for_monster(monster.level)
+                                            self.pl.add_xp(xp)
+                                            self.pl.total_monsters_killed[self.level] += 1
 
                         # charm spell
                         elif self.pl.cur_spell.spell_type == 2:
+                            duration = self.pl.cur_spell.get_charm_duration()
+
                             self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
                             tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
                             tiny_x = tiny_tup[0]
@@ -529,12 +544,15 @@ class GameScreen(object):
                                 ex_y = gp[1]
                                 for monster in self.monster_list:
                                     if monster.x == ex_x and monster.y == ex_y and monster.charmable:
-                                        ch = self.test_charm(monster.save_magic)
+                                        ch = self.pl.cur_spell.test_charm(monster.save_magic)
+                                        print("CHARMED=" + str(ch))
                                         if ch:
                                             #xp = monster.rect.centerx
                                             #yp = monster.rect.centery
                                             monster.charmed = True
                                             monster.charmed_by = self.pl
+                                            monster.charm_duration = duration
+
                                             xp = monster.rect.x - 4
                                             yp = monster.rect.y - 4
                                             c = wizards.charmed_gfx.Charmed(xp,yp)
@@ -571,7 +589,7 @@ class GameScreen(object):
                 elif e.key == pygame.K_p:
                     pick_up = False
                     
-            if time.time() - 0.5 > lastmovetime:
+            if time.time() - 0.5 > self.lastmovetime:
 
                 # move up
                 if moveUp and not moveLeft and not moveRight and not moveDown:
@@ -579,14 +597,17 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x, self.pl.y-1):
                             self.pl.update_player(0, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level)
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -596,14 +617,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
                             self.pl.update_player(2, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -613,14 +638,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
                             self.pl.update_player(3, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -630,14 +659,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
                             self.pl.update_player(1, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -647,14 +680,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
                             self.pl.update_player(7, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -664,14 +701,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
                             self.pl.update_player(4, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -681,14 +722,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
                             self.pl.update_player(5, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -698,14 +743,18 @@ class GameScreen(object):
                         if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
                             self.pl.update_player(6, self.collision_map)
                             self.player_moved = True
+                            self.steps_taken += 1
                         else:
                             self.clean_up()
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                            st = self.get_steps_percentage()
+                            mk = self.get_monsters_kill_percent()
+                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2, st, mk))
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
                         combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons)
+                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                 )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -723,15 +772,11 @@ class GameScreen(object):
                         self.message_countdown = 140
                         self.small_pop_up_visible = True
 
-
-
-
-
                 # restore magic
                 if not magic_cast and self.player_moved == True:
                     self.pl.restore_magic(self.pl.magic_restore)
                     
-                lastmovetime = time.time()
+                self.lastmovetime = time.time()
                 if self.player_moved:
                     self.player_moved = False
                     self.game_turn += 1
@@ -764,6 +809,7 @@ class GameScreen(object):
         return t
     
     def get_monster_start(self):
+        """Creates a start position for the monster"""
         sx = random.randrange(wizards.constants.WIDTH)
         sy = random.randrange(wizards.constants.HEIGHT)
         while self.collision_map[sy][sx] == 1:
@@ -1022,6 +1068,7 @@ class GameScreen(object):
             
     
     def init_monsters_2(self, num_mons):
+        """Init the monsters up to num_mons"""
         positions = []
 
         for i in range(num_mons):
@@ -1068,9 +1115,7 @@ class GameScreen(object):
             #self.collision_map[sy][sx] = 1 
             #self.monster_sprites.add(o)
             #self.monster_list.append(o)
-            
-            
-            
+
     def cycle_spell(self):
         cur_spell = self.pl.spell_index
         if len(self.pl.spell_list) > 1:
@@ -1079,13 +1124,6 @@ class GameScreen(object):
                 next_spell = 0
             self.pl.cur_spell = self.pl.spell_list[next_spell]
             self.pl.spell_index = next_spell
-            
-    def test_charm(self, resist):
-        roll = random.randrange(20)+1
-        if roll >= 17 or roll > resist:
-            return True
-        else:
-            return False
 
     def display_small_msg_box(self, scr, msg):
 
@@ -1212,12 +1250,15 @@ class GameScreen(object):
             if percent < 60:
                 t_val = random.randrange(6) + 1
                 treasure = self.im.add_gold(mons.x,mons.y, self.treasure_map, t_val)
+                treasure.init_image()
             elif percent >= 60 and percent < 75:
                 treasure = self.im.add_potion_with_location(mons.x, mons.y, self.treasure_map)
+                treasure.init_image()
         elif mons.name == "Bandit":
             if percent < 5:
                 t_val = random.randrange(100) + 1
                 treasure = self.im.add_gold(mons.x, mons.y, self.treasure_map, t_val)
+                treasure.init_image()
             elif percent >= 5 and percent < 8:
                 value_roll = random.randrange(8) + 1
                 if value_roll < 7:
@@ -1227,12 +1268,39 @@ class GameScreen(object):
                 elif value_roll == 8:
                     v = -1
                 treasure = self.im.add_sword(mons.x, mons.y, self.treasure_map, v)
+                treasure.init_image()
         # TODO add in other objects
 
         if treasure is not None:
             self.treasure_sprites.add(treasure)
             self.treasure_list.append(treasure)
             self.treasure_map[mons.y][mons.x] = treasure.item_id
+
+    def get_level_path(self):
+        """Returns length of path from start to finish"""
+        sq = wizards.square_grid.SquareGrid(wizards.constants.WIDTH,wizards.constants.HEIGHT)
+        sq.walls = self.get_walls()
+
+        first_blank = 0
+        for x in range(wizards.constants.WIDTH):
+            if self.collision_map[0][x] == 0:
+                first_blank = x
+                break
+
+        end_point = (first_blank+1, 0)
+        start_point = (self.pl.x, self.pl.y)
+
+        path = wizards.a_star.a_star_search(sq, start_point, end_point)
+
+        return len(path)
+
+    def get_steps_percentage(self):
+        return int((self.steps_taken / self.level_length) * 100)
+
+    def get_monsters_kill_percent(self):
+        print("MONSTERS=" + str(self.pl.total_monsters_killed[self.level]))
+        return int((self.pl.total_monsters_killed[self.level] / self.total_monsters) * 100)
+
 
 
 

@@ -16,7 +16,7 @@ class CombatResolver():
 
         self.xp_table = [5,10,20,35,75,175,275]
 
-    def resolve_player_hit(self, player, monster):
+    def resolve_player_hit(self, player, monster, dead_monsters, cur_level):
         # TODO Create combat system
         hd = monster.armour_rating + 3
         if hd < 0:
@@ -39,6 +39,8 @@ class CombatResolver():
             xp *= monster.xp_mod
             xp = int(xp)
             player.add_xp(xp)
+            dead_monsters += 1
+            player.total_monsters_killed[cur_level] += 1
         return dmg
 
     def get_xp_for_monster(self, level):
