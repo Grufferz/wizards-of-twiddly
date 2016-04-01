@@ -23,8 +23,8 @@ class Spell(object):
             self.magic_cost = 50
         #stoneskin
         if self.spell_type == 3:
-            self.magic_cost = 30
-            self.duration = 4
+            self.magic_cost = 40
+            self.duration = 6
 
     def set_duration(self, d):
         self.duration = d

@@ -18,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.spell_list.append(fb)
         charm = wizards.spells.Spell("Charm", 2, 0, True, None, 3)
         self.spell_list.append(charm)
+        stone = wizards.spells.Spell("Stoneskin", 3, 0, True, None, None)
+        self.spell_list.append(stone)
         self.cur_spell = self.spell_list[0]
         self.spell_index = 0
         self.active_spells = []
@@ -29,9 +31,10 @@ class Player(pygame.sprite.Sprite):
         self.gold = 0
         self.hand_weapon = None
         self.current_armour = None
-        self.initial_ac = 9
+        self.initial_ac = 7
         self.ac = self.initial_ac
         self.ac_missiles = self.ac
+        self.ac_missiles_init = self.ac_missiles
 
         self.dead = False
         self.sight = 40

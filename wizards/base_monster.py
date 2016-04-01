@@ -18,12 +18,16 @@ class BaseMonster(pygame.sprite.Sprite):
         self.fleeing = False
         self.morale = 6
         self.save_magic = 16
+        self.undead = False
 
         self.charmable = True
         self.charmed = False
         self.charmed_by = None
         self.charm_duration = 0
         self.charm_gfx = None
+
+        self.asleep = False
+        self.asleep_for = 0
 
         # TODO Monster AI
 

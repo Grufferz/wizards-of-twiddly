@@ -558,7 +558,17 @@ class GameScreen(object):
                                             c = wizards.charmed_gfx.Charmed(xp,yp)
                                             monster.charm_gfx = c
                                             #self.charm_gfx.add(c)
-                        
+
+                        # stoneskin spell
+                        if self.pl.cur_spell.spell_type == 3:
+                            self.pl.ac = 4
+                            self.pl.ac_missiles = 2
+                            st = "AC Now " + str(self.pl.ac) + " for " + str(self.pl.cur_spell.duration) + " turns"
+                            self.small_message = st
+                            self.message_countdown = 140
+                            self.small_pop_up_visible = True
+
+
                         #use magic
                         self.pl.deplete_magic(self.pl.cur_spell.magic_cost)
                                 
@@ -778,6 +788,8 @@ class GameScreen(object):
                     
                 self.lastmovetime = time.time()
                 if self.player_moved:
+                    if len(self.pl.active_spells) > 0:
+                        self.update_spells()
                     self.player_moved = False
                     self.game_turn += 1
                     self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
@@ -1300,6 +1312,20 @@ class GameScreen(object):
     def get_monsters_kill_percent(self):
         print("MONSTERS=" + str(self.pl.total_monsters_killed[self.level]))
         return int((self.pl.total_monsters_killed[self.level] / self.total_monsters) * 100)
+
+    def update_spells(self):
+        remove_list = []
+        if len(self.pl.active_spells) > 0:
+            for sp in self.pl.active_spells:
+                sp.update_spell()
+                if sp.expired is True:
+                    remove_list.append(sp)
+                    if sp.type == 3:
+                        self.pl.ac = self.pl.initial_ac
+                        self.pl.ac_missiles = self.pl.ac_missiles_init
+
+            for sp in remove_list:
+                self.pl.active_spells.remove(sp)
 
 
 

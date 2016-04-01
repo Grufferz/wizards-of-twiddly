@@ -19,4 +19,5 @@ class Skeleton(BaseMonster):
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None
+        self.undead = True
         

@@ -19,9 +19,13 @@ Z  X  C
 
 Use Mouse to aim spells. Mouse button to fire.
 
-N to change current spell
+N to change current spell.
 
 Each spell reduces mana, walk around to recharge.
+
+P picks up items/treasure.
+
+Use [ or ] to cycle through held items and U to use item.
 
 
 Enemies:
