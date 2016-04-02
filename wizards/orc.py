@@ -20,4 +20,14 @@ class Orc(BaseMonster):
         self.charmed_by = None
         self.charm_gfx = None
 
+        self.native_depth = 5
+        self.t = wizards.constants.ORC
+
+    def set_weight(self, lev):
+        w = 15 - abs(self.native_depth - lev)
+        w = max(w, 0)
+        w = min(w, 10)
+
+        self.weight = w
+
         

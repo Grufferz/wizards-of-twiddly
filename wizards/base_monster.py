@@ -20,6 +20,8 @@ class BaseMonster(pygame.sprite.Sprite):
         self.save_magic = 16
         self.undead = False
 
+        self.weight = 0
+
         self.charmable = True
         self.charmed = False
         self.charmed_by = None

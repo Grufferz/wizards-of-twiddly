@@ -116,11 +116,11 @@ class GameScreen(object):
 
         # setup monsters
         self.monsters_dead = 0
-        self.total_monsters = 4 + random.randrange(8) + 1 + self.level
+        self.total_monsters = 4 + (random.randrange(6) + 1) + (self.level // 5)
         self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
         self.monster_list = []
-        self.init_monsters_2(self.total_monsters)
+        self.init_monsters_2(self.total_monsters, self.level)
         
         self.dmg_list = []
 
@@ -1076,10 +1076,10 @@ class GameScreen(object):
         return False
     
     def in_largest_region(self,x,y):
+        """Returns region of map location is in"""
         return self.region_map[y][x] == self.largest_region
-            
     
-    def init_monsters_2(self, num_mons):
+    def init_monsters_2(self, num_mons, level):
         """Init the monsters up to num_mons"""
         positions = []
 
@@ -1089,44 +1089,10 @@ class GameScreen(object):
                 start_pos = self.get_monster_start()
             positions.append(start_pos)
         
-        self.monster_list = self.mons_gen.return_monster_list(positions, self.im, 1)
+        self.monster_list = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
         
         for m in self.monster_list:
             self.monster_sprites.add(m)
-                
-    
-    #def init_monsters(self, num_mons):
-        ##grid = square_grid.SquareGrid(constants.WIDTH,constants.HEIGHT)
-        ##grid.walls = self.get_walls()
-        
-        #player_pos = (self.pl.x, self.pl.y)
-        
-        #mons_gen = monster_gen.MonsterGenerator(self.level)
-        
-        #for i in range(num_mons):
-            #start_pos = self.get_monster_start()
-            #sx = start_pos[0]
-            #sy = start_pos[1]
-            #reg = self.region_map[sy][sx]
-            #h_distance = self.get_h_distance(sx, sy, self.pl.x, self.pl.y)
-            
-            ##came_from, cost = a_star.a_star_search(grid,start_pos,player_pos)
-            ##if len(came_from) > 0:
-                ##path = a_star.reconstruct_path(came_from,start_pos,player_pos)
-                ##print(str(len(path)))
-                
-            ##check not in player's sight, not too close and not trapped
-            #while self.light.lit(sx,sy) or reg != self.largest_region or (sx != self.pl.x and sy != self.pl.y) or h_distance < 20:
-                #start_pos = self.get_monster_start()
-                #sx = start_pos[0]
-                #sy = start_pos[1]  
-                #reg = self.region_map[sy][sx]
-                #h_distance = self.get_h_distance(sx, sy, self.pl.x, self.pl.y)
-            
-            #o = mons_gen.return_single_monster(sx,sy)
-            #self.collision_map[sy][sx] = 1 
-            #self.monster_sprites.add(o)
-            #self.monster_list.append(o)
 
     def cycle_spell(self):
         cur_spell = self.pl.spell_index

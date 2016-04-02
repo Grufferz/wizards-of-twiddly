@@ -83,9 +83,17 @@ BUILDINGS = 0.06
 
 DIS_PENALTY = 10
 
+# monsters
 WANDERING = 1
 LAIR = 0
 
+BANDIT = 1
+ORC = 2
+SKELETON = 3
+WIZARD = 4
+
+
+# treasure
 GOLD = 1
 WEAPON = 2
 TRAP = 3

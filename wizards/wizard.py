@@ -2,9 +2,10 @@ import pygame, random, os
 from wizards.base_monster import BaseMonster
 import wizards.constants
 
+
 class Wizard(BaseMonster):
-    def __init__(self,mid,x,y,name, level, m_type):
-        super().__init__(mid,x,y,name, level, m_type)
+    def __init__(self, mid, x, y, name, level, m_type):
+        super().__init__(mid, x, y, name, level, m_type)
         self.monster_id = mid
         self.image = pygame.image.load(os.path.join("data", "wizard1.png")).convert()
         self.rect = self.image.get_rect()
@@ -19,3 +20,13 @@ class Wizard(BaseMonster):
         self.charmed = False
         self.charmed_by = None
         self.charm_gfx = None
+
+        self.native_depth = 15
+        self.t = wizards.constants.WIZARD
+
+    def set_weight(self, lev):
+        w = 15 - abs(self.native_depth - lev)
+        w = max(w, 0)
+        w = min(w, 10)
+
+        self.weight = w
