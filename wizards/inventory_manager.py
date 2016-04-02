@@ -75,6 +75,7 @@ class InventoryManager():
             ad_ran = random.randrange(10) + 1
             if ad_ran > 8:
                 adj = 1
+                value *= 2
             else:
                 adj = 0
             treasure = wizards.inventory_object.Sword(self._itemcount, x, y, 'Sword', wizards.constants.WEAPON, True, value, adj)
