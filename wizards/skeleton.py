@@ -21,7 +21,7 @@ class Skeleton(BaseMonster):
         self.charm_gfx = None
         self.undead = True
 
-        self.native_depth = 5
+        self.native_depth = 10
         self.t = wizards.constants.SKELETON
 
     def set_weight(self, lev):

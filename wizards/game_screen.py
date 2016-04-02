@@ -1176,7 +1176,8 @@ class GameScreen(object):
 
         for treasure in placed_treasure:
             #t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
-            t = self.im.add_potion_with_location(treasure[0], treasure[1], self.treasure_map)
+            #t = self.im.add_potion_with_location(treasure[0], treasure[1], self.treasure_map)
+            t = self.im.add_random_item(treasure[0], treasure[1], self.treasure_map)
             self.treasure_list.append(t)
             self.treasure_sprites.add(t)
 

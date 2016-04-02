@@ -90,10 +90,14 @@ class MonsterGenerator():
         wizard = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", 1, m_type)
         wizard.set_weight(level)
 
-        random_getter.add_bucket(wizards.constants.ORC, orc.weight)
-        random_getter.add_bucket(wizards.constants.BANDIT, bandit.weight)
-        random_getter.add_bucket(wizards.constants.SKELETON, skeleton.weight)
-        random_getter.add_bucket(wizards.constants.WIZARD, wizard.weight)
+        if orc.weight > 0:
+            random_getter.add_bucket(wizards.constants.ORC, orc.weight)
+        if bandit.weight > 0:
+            random_getter.add_bucket(wizards.constants.BANDIT, bandit.weight)
+        if skeleton.weight > 0:
+            random_getter.add_bucket(wizards.constants.SKELETON, skeleton.weight)
+        if wizard.weight > 0:
+            random_getter.add_bucket(wizards.constants.WIZARD, wizard.weight)
 
         random_getter.init_buckets()
 
@@ -101,10 +105,10 @@ class MonsterGenerator():
             self.monster_count += 1
             roll = random_getter.get_random()
             level_roll = random.randrange(0, 1) + 1
-            if self.level_score == 12:
-                roll += 2
+
             x = p[0]
             y = p[1]
+
             if roll == wizards.constants.ORC:
                 ret_monster = wizards.orc.Orc(self.monster_count, x, y, "Orc", level_roll, m_type)
                 sword = im.add_sword_to_character()
