@@ -1,0 +1,5 @@
+Name,Type,Native Depth,Boss?,Special?
+Bandit,1,5,FALSE,FALSE
+Orc,2,5,FALSE,FALSE
+Skeleton,3,10,FALSE,FALSE
+Wizard,4,15,FALSE,FALSE

@@ -107,7 +107,8 @@ class GameScreen(object):
         self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)       
         
         # place treasure
-        self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
+        #self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
+        self.treasure_dict = {}
         self.treasure_sprites = pygame.sprite.Group()
         self.treasure_locations = treasure_locations
         self.treasure_list = []
@@ -771,12 +772,13 @@ class GameScreen(object):
                 # pick up item if we are standing on one
                 elif pick_up:
                     item_id = self.cell_contains_item(self.pl.x, self.pl.y)
-                    if item_id > 0:
+                    if item_id is not None:
                         item = self.get_item_by_id(item_id)
                         item.set_owner(self.pl)
                         self.pl.add_item_to_inventory(item)
                         self.pl.add_xp(item.value)
-                        self.treasure_map[self.pl.y][self.pl.x] = 0
+                        #self.treasure_map[self.pl.y][self.pl.x] = 0
+                        del self.treasure_dict[(self.pl.y, self.pl.x)]
                         self.treasure_sprites.remove(item)
                         self.small_message = item.get_description()
                         self.message_countdown = 140
@@ -1089,10 +1091,15 @@ class GameScreen(object):
                 start_pos = self.get_monster_start()
             positions.append(start_pos)
         
-        self.monster_list = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
-        
-        for m in self.monster_list:
-            self.monster_sprites.add(m)
+        #self.monster_list = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
+        ml = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
+
+        for k in ml:
+            self.monster_sprites.add(k)
+            self.monster_list.append(k)
+
+        for item in self.monster_list:
+            print(str(item))
 
     def cycle_spell(self):
         cur_spell = self.pl.spell_index
@@ -1177,7 +1184,7 @@ class GameScreen(object):
         for treasure in placed_treasure:
             #t = self.im.add_gold(treasure[0],treasure[1], self.treasure_map)
             #t = self.im.add_potion_with_location(treasure[0], treasure[1], self.treasure_map)
-            t = self.im.add_random_item(treasure[0], treasure[1], self.treasure_map)
+            t = self.im.add_random_item(treasure[0], treasure[1], self.treasure_dict)
             self.treasure_list.append(t)
             self.treasure_sprites.add(t)
 
@@ -1185,7 +1192,11 @@ class GameScreen(object):
         return self.monster_map[y][x]
 
     def cell_contains_item(self, x, y):
-        return self.treasure_map[y][x]
+        #return self.treasure_map[y][x]
+        if (y,x) in self.treasure_dict:
+            return self.treasure_dict[(y,x)]
+        else:
+            return None
 
     def get_item_by_id(self, number):
         for treasure in self.treasure_list:
@@ -1228,15 +1239,15 @@ class GameScreen(object):
         if mons.name == "Orc":
             if percent < 60:
                 t_val = random.randrange(6) + 1
-                treasure = self.im.add_gold(mons.x,mons.y, self.treasure_map, t_val)
+                treasure = self.im.add_gold(mons.x,mons.y, self.treasure_dict, t_val)
                 treasure.init_image()
             elif percent >= 60 and percent < 75:
-                treasure = self.im.add_potion_with_location(mons.x, mons.y, self.treasure_map)
+                treasure = self.im.add_potion_with_location(mons.x, mons.y, self.treasure_dict)
                 treasure.init_image()
         elif mons.name == "Bandit":
             if percent < 5:
                 t_val = random.randrange(100) + 1
-                treasure = self.im.add_gold(mons.x, mons.y, self.treasure_map, t_val)
+                treasure = self.im.add_gold(mons.x, mons.y, self.treasure_dict, t_val)
                 treasure.init_image()
             elif percent >= 5 and percent < 8:
                 value_roll = random.randrange(8) + 1
@@ -1246,14 +1257,15 @@ class GameScreen(object):
                     v = 2
                 elif value_roll == 8:
                     v = -1
-                treasure = self.im.add_sword(mons.x, mons.y, self.treasure_map, v)
+                treasure = self.im.add_sword(mons.x, mons.y, self.treasure_dict, v)
                 treasure.init_image()
         # TODO add in other objects
 
         if treasure is not None:
             self.treasure_sprites.add(treasure)
             self.treasure_list.append(treasure)
-            self.treasure_map[mons.y][mons.x] = treasure.item_id
+            #self.treasure_map[mons.y][mons.x] = treasure.item_id
+            self.treasure_dict[(mons.y, mons.x)] = treasure.item_id
 
     def get_level_path(self):
         """Returns length of path from start to finish"""

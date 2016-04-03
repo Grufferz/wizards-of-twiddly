@@ -30,4 +30,8 @@ class Orc(BaseMonster):
 
         self.weight = w
 
+    def init_image(self):
+        self.rect.x = self.x * wizards.constants.CHAR_SIZE
+        self.rect.y = self.y * wizards.constants.CHAR_SIZE
+
         

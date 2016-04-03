@@ -1,5 +1,6 @@
 import random, wizards.constants, wizards.bandit, wizards.orc, wizards.skeleton, wizards.wizard
-import wizards.w_rand
+import wizards.w_rand, wizards.w_rand_obj
+import csv, os
 
 class MonsterGenerator():
     
@@ -7,7 +8,7 @@ class MonsterGenerator():
         self.level = level
         self.monster_map = mm
         self.level_score = level_score
-        self.monster_count = 0
+        self.monster_count = 1
 
     def return_monster_list(self, positions, im, mt, level):
         
@@ -77,63 +78,78 @@ class MonsterGenerator():
     def get_initial_monsters(self, positions, im, mt, level):
         ret_list = []
         m_type = "Wandering"
-        x = 0
-        y = 0
         random_getter = wizards.w_rand.WeightedRandomGuesser()
 
-        orc = wizards.orc.Orc(self.monster_count, x, y, "Orc", 1, m_type)
-        orc.set_weight(level)
-        bandit = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit", 1, m_type)
-        bandit.set_weight(level)
-        skeleton = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton", 1, m_type)
-        skeleton.set_weight(level)
-        wizard = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", 1, m_type)
-        wizard.set_weight(level)
+        mons_list = self.load_monster_probs()
 
-        if orc.weight > 0:
-            random_getter.add_bucket(wizards.constants.ORC, orc.weight)
-        if bandit.weight > 0:
-            random_getter.add_bucket(wizards.constants.BANDIT, bandit.weight)
-        if skeleton.weight > 0:
-            random_getter.add_bucket(wizards.constants.SKELETON, skeleton.weight)
-        if wizard.weight > 0:
-            random_getter.add_bucket(wizards.constants.WIZARD, wizard.weight)
-
+        for i in mons_list:
+            i.set_weight(level)
+            if i.weight > 0:
+                random_getter.add_bucket(i.type, i.weight)
         random_getter.init_buckets()
-
         for p in positions:
-            self.monster_count += 1
-            roll = random_getter.get_random()
-            level_roll = random.randrange(0, 1) + 1
+            m_id = random_getter.get_random()
+            monster = None
 
-            x = p[0]
-            y = p[1]
+            if m_id == 1:
+                monster = self.create_bandit(self.monster_count, p[0], p[1], m_type, level, im)
+            elif m_id == 2:
+                monster = self.create_orc(self.monster_count, p[0], p[1], m_type, level, im)
+            elif m_id == 3:
+                monster = self.create_skeleton(self.monster_count, p[0], p[1], m_type, level, im)
+            elif m_id == 4:
+                monster = self.create_wizard(self.monster_count, p[0], p[1], m_type, level, im)
 
-            if roll == wizards.constants.ORC:
-                ret_monster = wizards.orc.Orc(self.monster_count, x, y, "Orc", level_roll, m_type)
-                sword = im.add_sword_to_character()
-                sword.set_owner(ret_monster)
-                ret_monster.current_weapon = sword
-            elif roll == wizards.constants.BANDIT:
-                ret_monster = wizards.bandit.Bandit(self.monster_count, x, y, "Bandit", level_roll, m_type)
-                sword = im.add_sword_to_character()
-                ret_monster.current_weapon = sword
-                sword.set_owner(ret_monster)
-            elif roll == wizards.constants.SKELETON:
-                ret_monster = wizards.skeleton.Skeleton(self.monster_count, x, y, "Skeleton", level_roll, m_type)
-                sword = im.add_sword_to_character()
-                ret_monster.current_weapon = sword
-                sword.set_owner(ret_monster)
-            elif roll == wizards.constants.WIZARD:
-                ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", level_roll, m_type)
-                # TODO Add hand weapon for wizards
-            self.monster_map[y][x] = self.monster_count
-            ret_list.append(ret_monster)
+            ret_list.append(monster)
 
         return ret_list
 
 
+    def create_bandit(self, id, x, y, m_type, level, im):
+        bandit = wizards.bandit.Bandit(id, x, y, "Bandit", level, m_type)
+        sword = im.add_sword_to_character()
+        sword.set_owner(bandit)
+        bandit.current_weapon = sword
+        self.monster_count += 1
+        return bandit
 
+    def create_orc(self, id, x, y, m_type, level, im):
+        mons = wizards.orc.Orc(id, x, y, "Orc", level, m_type)
+        sword = im.add_sword_to_character()
+        sword.set_owner(mons)
+        mons.current_weapon = sword
+        self.monster_count += 1
+        return mons
+
+    def create_skeleton(self, id, x, y, m_type, level, im):
+        mons = wizards.skeleton.Skeleton(id, x, y, "Skeleton", level, m_type)
+        sword = im.add_sword_to_character()
+        sword.set_owner(mons)
+        mons.current_weapon = sword
+        self.monster_count += 1
+        return mons
+
+    def create_wizard(self, id, x, y, m_type, level, im):
+        mons = wizards.wizard.Wizard(id, x, y, "Wizard", level, m_type)
+        # TODO Add hand weapon for wizards
+        #sword = im.add_sword_to_character()
+        #sword.set_owner(mons)
+        #mons.current_weapon = sword
+        self.monster_count += 1
+        return mons
+
+    def load_monster_probs(self):
+        ret_list = []
+        ifile = open(os.path.join("wizards", "monsters_prob.csv"))
+        reader = csv.reader(ifile)
+        row_num = 0
+        for row in reader:
+            if row_num > 0:
+                o = wizards.w_rand_obj.WRObject(row[1], row[0], row[2], row[3], row[4])
+                ret_list.append(o)
+            row_num += 1
+        ifile.close()
+        return ret_list
 
 
 

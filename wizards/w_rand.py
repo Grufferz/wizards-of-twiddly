@@ -37,11 +37,12 @@ class WeightedRandomGuesser():
             else:
                 self.guesses[x].edge = self.guesses[x-1].edge + this_size
 
+        #print("SIZE=" + str(self.guesses[x-1].edge))
         #self.guesses.sort(key=lambda x: x.edge)
 
     def get_random(self):
         self.guesses.sort(key=lambda x: x.edge)
-        num_buckets= len(self.guesses)
+        num_buckets = len(self.guesses)
         first = 0
         last = len(self.guesses) - 1
         found = False
@@ -56,7 +57,7 @@ class WeightedRandomGuesser():
                 last = midpoint - 1
             else:
                 first = midpoint + 1
-        return 0
+        return None
 
     def in_bucket(self, i, target):
         if i == 0 and target <= self.guesses[i].edge:

@@ -15,7 +15,8 @@ class InventoryManager():
             value = random.randrange(5)+3
         gold = wizards.inventory_object.Gold(self._itemcount, x, y, name, wizards.constants.GOLD, False, value)
         gold.init_image()
-        t_map[y][x] = self._itemcount
+        #t_map[y][x] = self._itemcount
+        t_map[(y,x)] = self._itemcount
         self._itemcount += 1
         return gold
 
@@ -49,7 +50,8 @@ class InventoryManager():
                                                  True, 1, 1)
         potion.init_image()
 
-        t_map[y][x] = self._itemcount
+        #t_map[y][x] = self._itemcount
+        t_map[(y, x)] = self._itemcount
         self._itemcount += 1
         return potion
 
@@ -83,7 +85,8 @@ class InventoryManager():
             # TODO create random potion selecter
             treasure = wizards.inventory_object.Potion(self._itemcount, x, y, 'Healing Potion', wizards.constants.POTION, True, 1, 1)
 
-        t_map[y][x] = self._itemcount
+        #t_map[y][x] = self._itemcount
+        t_map[(y, x)] = self._itemcount
         treasure.init_image()
         self._itemcount += 1
         return treasure

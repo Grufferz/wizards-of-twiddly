@@ -55,6 +55,19 @@ class BaseMonster(pygame.sprite.Sprite):
             
         self.rect.x = self.x * wizards.constants.CHAR_SIZE
         self.rect.y = self.y * wizards.constants.CHAR_SIZE
+
+    def __str__(self):
+        return self.name + ": " + str(self.monster_id) + " >> "+ str(self.y) + "_" + str(self.x)
+
+    def __eq__(self, other):
+        return self.monster_id == other.monster_id
+
+    def __hash__(self):
+        return self.monster_id
+
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
         
     def is_valid_move(self, x, y, col_map):
         if col_map[y][x] == 0:
