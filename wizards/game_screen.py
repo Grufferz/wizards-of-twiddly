@@ -5,7 +5,7 @@ import wizards.a_star, wizards.my_queue, wizards.square_grid
 
 class GameScreen(object):
     
-    def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level, pl_start, special_zones):
+    def __init__(self, world, collision, om, rm, tot_r, largest, bld, treasure_locations, level, pl_start, special_zones, walls):
         super(GameScreen, self).__init__()
         random.seed(wizards.constants.NOW)
         self.fontname = "Imperator.ttf"
@@ -33,6 +33,7 @@ class GameScreen(object):
         
         self.collision_map = collision
         self.object_map = om
+        self.walls = walls
      
         self.region_map = rm
         self.total_regions = tot_r
@@ -103,9 +104,12 @@ class GameScreen(object):
         self.message_countdown = 0
         
         # setup lit_map
+        start_time = time.time()
         self.light = wizards.light_map.LightMap(self.collision_map)
-        self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)       
-        
+        self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
+        print("FOV %s seconds --- " % (time.time() - start_time))
+
+        start_time = time.time()
         # place treasure
         #self.treasure_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.treasure_dict = {}
@@ -114,14 +118,17 @@ class GameScreen(object):
         self.treasure_list = []
         # TODO Different treasure
         self.set_treasure()
+        print("TREASURE %s seconds --- " % (time.time() - start_time))
 
         # setup monsters
+        start_time = time.time()
         self.monsters_dead = 0
-        self.total_monsters = 4 + (random.randrange(6) + 1) + (self.level // 5)
+        self.total_monsters = 4 + (random.randrange(4) + 1) + (self.level // 5)
         self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
         self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
         self.monster_list = []
         self.init_monsters_2(self.total_monsters, self.level)
+        print("MONSTERS %s seconds --- " % (time.time() - start_time))
         
         self.dmg_list = []
 
@@ -831,15 +838,6 @@ class GameScreen(object):
             sy = random.randrange(wizards.constants.HEIGHT)
             
         return (sx,sy)
-            
-                        
-    #def setup_collision_map(self):
-        #for y in range(constants.FHEIGHT):
-            #for x in range(constants.FWIDTH):
-                #if self.world[y][x] == 1:
-                    #xp = int((x*constants.F_BLOCKS) / constants.CHAR_SIZE)
-                    #yp = int((y*constants.F_BLOCKS) / constants.CHAR_SIZE)
-                    #self.collision_map[yp][xp] = 1        
                     
     def convert_screen_pos_to_grid(self,mx,my):
         x = mx // wizards.constants.CHAR_SIZE
@@ -1073,7 +1071,8 @@ class GameScreen(object):
         
     def is_too_near(self,x,y,l,dist):
         for li in l:
-            if self.get_distance(x,y,li[0],li[1]) <= dist:
+            #if self.get_distance(x,y,li[0],li[1]) <= dist:
+            if self.get_h_distance(x, y ,li[0], li[1]) <= dist:
                 return True
         return False
     
@@ -1151,25 +1150,34 @@ class GameScreen(object):
             self.pop_up_visible = True
         
     def set_treasure(self):
-        
-        sq = wizards.square_grid.SquareGrid(wizards.constants.WIDTH,wizards.constants.HEIGHT)
-        sq.walls = self.get_walls()
+
+        st = time.time()
+        sq = wizards.square_grid.SquareGrid2(wizards.constants.WIDTH,wizards.constants.HEIGHT)
+        sq.walls = self.walls
+
         pl_start = (self.pl.x,self.pl.y)
         dis_map = wizards.searches.breadth_first_search(sq,pl_start)
+        print("BFS %s seconds --- " % (time.time() - st))
         max_val = 0
         add_list = []
-        for key,v in dis_map.items():
-            if v > max_val:
-                max_val = v
+        #for key,v in dis_map.items():
+         #   if v > max_val:
+          #      max_val = v
+        #max_val = max(dis_map.keys(), key=(lambda k: dis_map[k]))
+        vals = list(dis_map.values())
+        #keys = list(dis_map.keys())
+        max_val = max(vals)
+        #max_val = keys[vals.index(max(vals))]
+
         for key, v in dis_map.items():
-            if v > (max_val-40):
+            if v > (max_val-30):
                 add_list.append(key)
                 #t = temp_gfx.TempGraphic(key[0],key[1])
                 #self.temp_sprites.add(t)                  
             #print(str(key[0]))
         self.treasure_locations = self.treasure_locations + add_list
         
-        num_treasures = random.randrange(1,self.level_score+1)
+        num_treasures = random.randrange(self.level_score+1) + 1
 
         placed_treasure = []
         for l in range(num_treasures):
@@ -1177,7 +1185,7 @@ class GameScreen(object):
             if len(placed_treasure) < 1:
                 placed_treasure.append(loc)
             else:
-                while self.is_too_near(loc[0],loc[1],placed_treasure,20):
+                while self.is_too_near(loc[0],loc[1],placed_treasure,25):
                     loc = random.choice(self.treasure_locations)
                 placed_treasure.append(loc)
 

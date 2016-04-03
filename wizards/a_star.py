@@ -5,6 +5,13 @@ def heuristic(a,b):
     (x2, y2) = b
     return abs(x1 - x2) + abs(y1 - y2)
 
+def heuristic_diagonal(a, b):
+    (x1, y1) = a
+    (x2, y2) = b
+    dx = abs(x1 - x2)
+    dy = abs(y1 - y2)
+    return 1 * (dx + dy) + (1 - 2 * 1) * min(dx, dy)
+
 def a_star_search(graph, start, goal):
     
     frontier = wizards.my_queue.PriorityQueue()
@@ -24,7 +31,7 @@ def a_star_search(graph, start, goal):
             new_cost = cost_so_far[current] + 1 #graph.cost(current, next)
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
-                priority = new_cost + heuristic(goal, next)
+                priority = new_cost + heuristic_diagonal(goal, next)
                 frontier.put(next, priority)
                 came_from[next] = current
                 

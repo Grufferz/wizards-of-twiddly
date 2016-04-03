@@ -22,6 +22,7 @@ class LoadingScreen(object):
         self.fm.create_basic_forest()
         self.world = None
         self.c_map = None
+        self.walls = []
         self.f_count = 0
         self.finished = False
         
@@ -97,7 +98,7 @@ class LoadingScreen(object):
                 if e.type == pygame.KEYDOWN:
                     self.manager.go_to(wizards.game_screen.GameScreen(self.world, self.c_map, self.object_map, self.region_map, self.total_regions,
                                                                       self.max_region, self.buildings, self.treasure_locations, self.level,
-                                                                      self.pl_start, self.special_zones))
+                                                                      self.pl_start, self.special_zones, self.walls))
 
     def create_collision_map(self):
 
@@ -106,7 +107,9 @@ class LoadingScreen(object):
         for y in range(wizards.constants.HEIGHT):
             for x in range(wizards.constants.WIDTH):
                 if self.buildings[y][x] == 1:
-                    self.c_map[y][x] = 1       
+                    self.c_map[y][x] = 1
+                if self.c_map[y][x] == 1:
+                    self.walls.append((x,y))
 
     def populate_objects(self, column):
         #for y in range(constants.FHEIGHT):
@@ -171,7 +174,7 @@ class LoadingScreen(object):
                 pass
     
     def process_regions(self):
-        grid = wizards.square_grid.SquareGrid(wizards.constants.WIDTH,wizards.constants.HEIGHT)
+        grid = wizards.square_grid.SquareGrid2(wizards.constants.WIDTH,wizards.constants.HEIGHT)
         grid.walls = self.get_walls()
         self.total_regions += 1
         max_count = 0
