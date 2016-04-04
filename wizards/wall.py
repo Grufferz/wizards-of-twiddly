@@ -3,9 +3,9 @@ import constants
 
 class WallSprite(pygame.sprite.Sprite):
    
-    def __init__(self,x,y):
+    def __init__(self, x, y, img):
         super().__init__()
-        self.image = pygame.image.load(os.path.join("data","wall.png"))
+        self.image = img
         #self.image = pygame.image.load("wall.png")
         self.image.convert()
         self.rect = self.image.get_rect()

@@ -1,6 +1,6 @@
 import pygame, random, os
 from wizards.base_monster import BaseMonster
-import wizards.constants
+import wizards.constants, wizards.treasure_drop
 
 
 class Wizard(BaseMonster):
@@ -23,6 +23,10 @@ class Wizard(BaseMonster):
 
         self.native_depth = 15
         self.t = wizards.constants.WIZARD
+
+        rand_chance = 10 * self.level
+        rand_chance = min(30, rand_chance)
+        self.treasure_drop = wizards.treasure_drop.TreasureDrop(25, 1, 8, 0, 25, rand_chance)
 
     def set_weight(self, lev):
         w = 15 - abs(self.native_depth - lev)

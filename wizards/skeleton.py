@@ -24,6 +24,8 @@ class Skeleton(BaseMonster):
         self.native_depth = 10
         self.t = wizards.constants.SKELETON
 
+        self.treasure_drop = None
+
     def set_weight(self, lev):
         w = 15 - abs(self.native_depth - lev)
         w = max(w, 0)

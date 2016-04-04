@@ -1,4 +1,4 @@
-import pygame, random, os
+import pygame, random, os, time
 import wizards.building_maker, wizards.forest_maker, wizards.game_objects, wizards.my_queue, wizards.game_screen
 
 
@@ -12,14 +12,18 @@ class LoadingScreen(object):
         #self.sfont = pygame.font.SysFont('Arial', 32)
         self.font2 = pygame.font.Font(os.path.join('data', self.fontname), 36)
 
+        start_time = time.time()
         self.bm = wizards.building_maker.BuildingsMaker(wizards.constants.WIDTH,wizards.constants.HEIGHT)
         self.bm.build_map(wizards.constants.BUILDINGS)
+        print("BUILDINGS %s seconds --- " % (time.time() - start_time))
         self.buildings = None
         self.buildings_loaded = False
         self.level = level
 
+        start_time = time.time()
         self.fm = wizards.forest_maker.ForestMaker(wizards.constants.FWIDTH,wizards.constants.FHEIGHT)
         self.fm.create_basic_forest()
+        print("FOREST %s seconds --- " % (time.time() - start_time))
         self.world = None
         self.c_map = None
         self.walls = []
@@ -62,8 +66,10 @@ class LoadingScreen(object):
     
     def update(self):
         if not self.buildings_loaded:
+            start_time = time.time()
             self.buildings = self.bm.return_buildings()
             self.buildings_loaded = True
+            print("BUILDINGS2 %s seconds --- " % (time.time() - start_time))
         if not self.finished:
             fl = self.fm.update_forest_progress()
             self.f_count =  min(int((fl.coverage / wizards.constants.DES_COVERAGE)), 100)
@@ -82,11 +88,14 @@ class LoadingScreen(object):
                 self.objects_loaded = True
                 
         if self.ob_started and self.finished and not self.regions_loaded:
+            start_time = time.time()
             self.max_region = self.process_regions()  
             self.regions_loaded = True
+            print("REGIONS %s seconds --- " % (time.time() - start_time))
             self.treasure_locations = self.wall_test()
             self.pl_start = self.get_player_start()
             #self.special_zones += self.carve_exit()
+
 
             self.special_zones = self.carve_door(self.pl_start[0], self.pl_start[1])
             self.special_zones += self.carve_exit()

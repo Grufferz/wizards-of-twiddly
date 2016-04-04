@@ -39,8 +39,10 @@ class CombatResolver():
             xp *= monster.xp_mod
             xp = int(xp)
             player.add_xp(xp)
+
             dead_monsters += 1
             player.total_monsters_killed[cur_level] += 1
+            player.mons_killed_melee += 1
         return dmg
 
     def get_xp_for_monster(self, level):

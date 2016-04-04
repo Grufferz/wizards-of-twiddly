@@ -4,7 +4,7 @@ import wizards.loading_screen, wizards.constants, wizards.utils
 
 class ExitScreen(object):
 
-    def __init__(self, player, level_num, came_from, steps_taken, mons_killed):
+    def __init__(self, player, level_num, came_from):
         super(ExitScreen, self).__init__()
         self.player = player
         self.level_num = level_num
@@ -12,10 +12,8 @@ class ExitScreen(object):
         self.player.game_level = self.next_level
         #save player
         self.player.image = None
-        self.steps_taken = steps_taken
-        self.mons_killed = mons_killed
         print(vars(self.player))
-        print("LENNY=" + str(len(self.player.inventory)))
+
         for item in self.player.inventory:
             item.prepare_to_store()
             print(vars(item))
@@ -49,8 +47,8 @@ class ExitScreen(object):
         text3 = self.sfont.render('Exiting Level ' + str(self.level_num), True, WHITE)
         text4 = self.sfont.render('Experience Gained: ' + str(self.player.xp), True, WHITE)
         text5 = self.sfont.render('Gold Gathered: ' + str(self.player.get_gold_amount()), True, WHITE)
-        text7 = self.sfont.render('Speed: ' + str(self.steps_taken) + "%", True, WHITE)
-        text8 = self.sfont.render('Killed: ' + str(self.mons_killed) + "%", True, WHITE)
+        text7 = self.sfont.render('Speed: ' + str(self.player.stats[self.level_num].speed_percent) + "%", True, WHITE)
+        text8 = self.sfont.render('Killed: ' + str(self.player.stats[self.level_num].kills_percent) + "%", True, WHITE)
         text6 = self.sfont.render('Saving Game', True, WHITE)
         screen.blit(text1, (400, 100))
         screen.blit(text3, (400, 150))

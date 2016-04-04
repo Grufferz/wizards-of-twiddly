@@ -104,7 +104,6 @@ class MonsterGenerator():
 
         return ret_list
 
-
     def create_bandit(self, id, x, y, m_type, level, im):
         bandit = wizards.bandit.Bandit(id, x, y, "Bandit", level, m_type)
         sword = im.add_sword_to_character()

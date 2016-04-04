@@ -1,5 +1,5 @@
 import pygame, os, random
-import wizards.constants
+import wizards.constants, wizards.player_stats
 
 
 class Player(pygame.sprite.Sprite):
@@ -41,7 +41,16 @@ class Player(pygame.sprite.Sprite):
         self.xp = 0
         self.level = 1
         self.game_level = 1
+        # game stats
+        self.stats = {}
         self.total_monsters_killed = {}
+        self.mons_killed_melee = 0
+        self.mons_killed_magic = 0
+        self.total_monsters_on_level = 0
+        self.best_steps_for_level = 0
+        self.steps_taken = 0
+
+
         self.carry_weight = 0
 
         self.image_name = "player_blank2.png"
@@ -208,3 +217,24 @@ class Player(pygame.sprite.Sprite):
                 if self.inventory[self.item_index].weapon:
                     self.set_current_weapon(self.inventory[self.item_index])
         return msg
+
+    def init_stats(self, tot, steps):
+        self.mons_killed_magic = 0
+        self.mons_killed_melee = 0
+        self.total_monsters_on_level = tot
+        self.best_steps_for_level = steps
+        self.steps_taken = 0
+
+    def set_stats_for_level(self, level):
+        kp = self.get_monsters_kill_percent(level)
+        speed = self.get_steps_percentage()
+        magic = int((self.mons_killed_magic / self.total_monsters_on_level) * 100)
+        melee = int((self.mons_killed_melee / self.total_monsters_on_level) * 100)
+
+        self.stats[level] = wizards.player_stats.PlayerStats(speed, kp, magic, melee)
+
+    def get_monsters_kill_percent(self, l):
+        return int((self.total_monsters_killed[l] / self.total_monsters_on_level) * 100)
+
+    def get_steps_percentage(self):
+        return int((self.steps_taken / self.best_steps_for_level) * 100)

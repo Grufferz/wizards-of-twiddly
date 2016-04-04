@@ -90,3 +90,42 @@ class InventoryManager():
         treasure.init_image()
         self._itemcount += 1
         return treasure
+
+    def add_weighted_random_treasure_drop(self, monster, t_map):
+        ran = wizards.w_rand.WeightedRandomGuesser()
+        return_treasure = None
+        if monster.treasure_drop is not None:
+            nothing = monster.treasure_drop.nothing_chance
+            if nothing > 0:
+                ran.add_bucket(0, monster.treasure_drop.nothing_chance)
+            if monster.treasure_drop.gold_chance > 0:
+                ran.add_bucket(1, monster.treasure_drop.gold_chance)
+            if monster.treasure_drop.potion_chance > 0:
+                ran.add_bucket(2, monster.treasure_drop.potion_chance)
+            if monster.treasure_drop.scroll_chance > 0:
+                ran.add_bucket(3, monster.treasure_drop.scroll_chance)
+            if monster.treasure_drop.rand_magic_chance > 0:
+                ran.add_bucket(4, monster.treasure_drop.rand_magic_chance)
+
+            ran.init_buckets()
+            result = ran.get_random()
+        else:
+            result = 0
+            print("No Drop")
+
+        if result == 0:
+            print("Nothing Drop")
+        if result == 1:
+            value = random.randrange(monster.treasure_drop.gold_min, monster.treasure_drop.gold_max) + 1
+            return_treasure = self.add_gold(monster.x, monster.y, t_map, value)
+        if result == 2:
+            print("POTION")
+            # TODO Add random potion drops
+        if result == 3:
+            print("SCROLL")
+            # TODO Add random scroll drops
+        if result > 3:
+            print("RANDOM MAGIC TREASURE")
+            # TODO Add random magic drops
+
+        return return_treasure

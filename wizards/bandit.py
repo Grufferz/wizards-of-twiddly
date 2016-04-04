@@ -1,6 +1,6 @@
 import pygame, os, random
 from wizards.base_monster import BaseMonster
-import wizards.constants
+import wizards.constants, wizards.treasure_drop
 
 class Bandit(BaseMonster):
     def __init__(self, mid, x, y, name, level, m_type):
@@ -19,11 +19,12 @@ class Bandit(BaseMonster):
         self.native_depth = 5
         self.t = wizards.constants.BANDIT
 
+        self.treasure_drop = wizards.treasure_drop.TreasureDrop(5, 1, 100, 0, 0, 2)
+
     def set_weight(self, lev):
         w = 15 - abs(self.native_depth - lev)
         w = max(w, 0)
         w = min(w, 10)
-
         self.weight = w
 
     def init_image(self):

@@ -1,6 +1,6 @@
 import pygame, random, os
 from wizards.base_monster import BaseMonster
-import wizards.constants
+import wizards.constants, wizards.treasure_drop
 
 class Orc(BaseMonster):
     def __init__(self, mid, x, y, name, level, m_type):
@@ -22,6 +22,8 @@ class Orc(BaseMonster):
 
         self.native_depth = 5
         self.t = wizards.constants.ORC
+
+        self.treasure_drop = wizards.treasure_drop.TreasureDrop(60, 1, 6, 15, 0, 0)
 
     def set_weight(self, lev):
         w = 15 - abs(self.native_depth - lev)
