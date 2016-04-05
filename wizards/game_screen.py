@@ -32,6 +32,7 @@ class GameScreen(object):
         self.level = level
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.empty()
+        self.tree_img = pygame.image.load(os.path.join("data", "small_tree.png")).convert()
         self.add_tree_gfx()
         print("TREES %s seconds --- " % (time.time() - start_time))
         
@@ -151,6 +152,7 @@ class GameScreen(object):
         
         self.show_all_monsters = False
 
+        self.combat_resolver = wizards.resolve_combat.CombatResolver()
         # initialise player status for level
         self.pl.init_stats(self.total_monsters, self.level_length)
 
@@ -364,7 +366,7 @@ class GameScreen(object):
                     brn.removed = True
                     tup = (brn.x,brn.y)
                     remove_list.append(tup) 
-                    t = wizards.tree.Tree(brn.x,brn.y)
+                    t = wizards.tree.Tree(brn.x,brn.y, self.tree_img)
                     for tr in self.all_sprite_list.sprites():
                         if tr.x == brn.x and tr.y == brn.y:
                             self.all_sprite_list.remove(tr)
@@ -643,8 +645,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level)
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level)
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
                         self.player_moved = True
@@ -662,8 +664,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -682,8 +684,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -702,8 +704,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -722,8 +724,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -742,8 +744,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -762,8 +764,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -782,8 +784,8 @@ class GameScreen(object):
                     else:
                         mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
                         mons = self.get_monster_by_id(mid)
-                        combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                        #combat_resolver = wizards.resolve_combat.CombatResolver()
+                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
                                                                  )
                         dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
                         self.dmg_list.append(dm_token)
@@ -816,11 +818,11 @@ class GameScreen(object):
                     self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
     
     def add_tree_gfx(self):
-        img = pygame.image.load(os.path.join("data", "small_tree.png")).convert()
+
         for y in range(wizards.constants.FHEIGHT):
             for x in range(wizards.constants.FWIDTH):
                 if self.world[y][x] == 1:
-                    t = wizards.tree.Tree(x, y, img)
+                    t = wizards.tree.Tree(x, y, self.tree_img)
                     self.all_sprite_list.add(t)
      
     def setup_buildings(self):

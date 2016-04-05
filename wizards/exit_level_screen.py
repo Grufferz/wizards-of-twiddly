@@ -39,6 +39,7 @@ class ExitScreen(object):
 
         self.font = pygame.font.SysFont('Arial', 40)
         self.sfont = pygame.font.SysFont('Arial', 24)
+        self.sfont2 = pygame.font.SysFont('Arial', 18)
 
     def render(self, screen):
         screen.fill(BLACK)
@@ -47,8 +48,10 @@ class ExitScreen(object):
         text3 = self.sfont.render('Exiting Level ' + str(self.level_num), True, WHITE)
         text4 = self.sfont.render('Experience Gained: ' + str(self.player.xp), True, WHITE)
         text5 = self.sfont.render('Gold Gathered: ' + str(self.player.get_gold_amount()), True, WHITE)
-        text7 = self.sfont.render('Speed: ' + str(self.player.stats[self.level_num].speed_percent) + "%", True, WHITE)
-        text8 = self.sfont.render('Killed: ' + str(self.player.stats[self.level_num].kills_percent) + "%", True, WHITE)
+        text7 = self.sfont2.render('Speed: ' + str(self.player.stats[self.level_num].speed_percent) + "%", True, WHITE)
+        text8 = self.sfont2.render('Killed: ' + str(self.player.stats[self.level_num].kills_percent) + "%", True, WHITE)
+        text9 = self.sfont2.render('Magic Kills: ' + str(self.player.stats[self.level_num].kills_magic) + "%", True, WHITE)
+        text10 = self.sfont2.render('Melee Kills: ' + str(self.player.stats[self.level_num].kills_melee) + "%", True, WHITE)
         text6 = self.sfont.render('Saving Game', True, WHITE)
         screen.blit(text1, (400, 100))
         screen.blit(text3, (400, 150))
@@ -57,7 +60,9 @@ class ExitScreen(object):
         screen.blit(text6, (400, 300))
         screen.blit(text7, (400, 350))
         screen.blit(text8, (400, 400))
-        screen.blit(text2, (400, 450))
+        screen.blit(text9, (400, 430))
+        screen.blit(text10, (400, 460))
+        screen.blit(text2, (400, 520))
 
 
     def update(self):

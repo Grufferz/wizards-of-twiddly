@@ -1,5 +1,5 @@
 import pygame, os, random
-import wizards.constants, wizards.player_stats
+import wizards.constants, wizards.player_stats, wizards.bags
 
 
 class Player(pygame.sprite.Sprite):
@@ -36,11 +36,14 @@ class Player(pygame.sprite.Sprite):
         self.ac_missiles = self.ac
         self.ac_missiles_init = self.ac_missiles
 
+        self.hit_chance = wizards.bags.NumberBag(1, 20, 2)
+
         self.dead = False
         self.sight = 40
         self.xp = 0
         self.level = 1
         self.game_level = 1
+
         # game stats
         self.stats = {}
         self.total_monsters_killed = {}
@@ -228,8 +231,12 @@ class Player(pygame.sprite.Sprite):
     def set_stats_for_level(self, level):
         kp = self.get_monsters_kill_percent(level)
         speed = self.get_steps_percentage()
-        magic = int((self.mons_killed_magic / self.total_monsters_on_level) * 100)
-        melee = int((self.mons_killed_melee / self.total_monsters_on_level) * 100)
+        if self.total_monsters_killed[level] > 0:
+            magic = int((self.mons_killed_magic / self.total_monsters_killed[level]) * 100)
+            melee = int((self.mons_killed_melee / self.total_monsters_killed[level]) * 100)
+        else:
+            magic = 0
+            melee = 0
 
         self.stats[level] = wizards.player_stats.PlayerStats(speed, kp, magic, melee)
 

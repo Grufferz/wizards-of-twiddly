@@ -1,4 +1,4 @@
-import random
+import wizards.w_rand
 
 class CombatResolver():
 
@@ -16,6 +16,12 @@ class CombatResolver():
 
         self.xp_table = [5,10,20,35,75,175,275]
 
+        self.critical_rand = wizards.w_rand.WeightedRandomGuesser()
+        self.critical_rand.add_bucket(1, 30)
+        self.critical_rand.add_bucket(2, 30)
+        self.critical_rand.add_bucket(3, 2)
+        self.critical_rand.init_buckets()
+
     def resolve_player_hit(self, player, monster, dead_monsters, cur_level):
         # TODO Create combat system
         hd = monster.armour_rating + 3
@@ -23,11 +29,25 @@ class CombatResolver():
             hd = 0
         if hd > 12:
             hd = 12
-        roll = random.randrange(20) + 1 + player.hand_weapon.adjuster
+        # roll = random.randrange(20) + 1 + player.hand_weapon.adjuster
+        roll = player.hit_chance.draw() + player.hand_weapon.adjuster
         print(str(roll) + " >> " + str(self.player_attack[hd]))
         if roll >= self.player_attack[hd]:
-            dmg = player.get_weapon_damage()
-            monster.take_damage(dmg)
+            if roll == 20:
+                # critical damage
+                crit_hit = self.critical_rand.get_random()
+                if crit_hit == 1:
+                    dmg = (player.get_weapon_damage() * 2)
+                elif crit_hit == 2:
+                    dmg = (player.get_weapon_damage() * 3)
+                elif crit_hit == 3:
+                    dmg = monster.hp
+                else:
+                    dmg = player.get_weapon_damage()
+                monster.take_damage(dmg)
+            else:
+                dmg = player.get_weapon_damage()
+                monster.take_damage(dmg)
         else:
             dmg = 0
         # if monster is dead add XP
