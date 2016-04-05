@@ -19,6 +19,9 @@ class Bandit(BaseMonster):
         self.native_depth = 5
         self.t = wizards.constants.BANDIT
 
+        self.orig_hp = self.get_hp(level) * 8
+        self.hp = self.orig_hp
+
         self.treasure_drop = wizards.treasure_drop.TreasureDrop(5, 1, 100, 0, 0, 2)
 
     def set_weight(self, lev):
@@ -30,3 +33,26 @@ class Bandit(BaseMonster):
     def init_image(self):
         self.rect.x = self.x * wizards.constants.CHAR_SIZE
         self.rect.y = self.y * wizards.constants.CHAR_SIZE
+
+
+class BanditArcher(Bandit):
+
+    def __init__(self, mid, x, y, name, level, m_type):
+        super().__init__(mid, x, y, name, level, m_type)
+
+
+class BanditLeader(Bandit):
+
+    def __init__(self, mid, x, y, name, level, m_type):
+        super().__init__(mid, x, y, name, level, m_type)
+        self.morale = 12
+
+class BanditBezerker(Bandit):
+    def __init__(self, mid, x, y, name, level, m_type):
+        super().__init__(mid, x, y, name, level, m_type)
+        self.morale = 12
+        self.never_surrender = True
+        self.orig_hp = self.get_hp(level) * 9
+        self.hp = self.orig_hp
+
+

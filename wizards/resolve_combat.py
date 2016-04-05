@@ -33,7 +33,7 @@ class CombatResolver():
         roll = player.hit_chance.draw() + player.hand_weapon.adjuster
         print(str(roll) + " >> " + str(self.player_attack[hd]))
         if roll >= self.player_attack[hd]:
-            if roll == 20:
+            if roll >= 20:
                 # critical damage
                 crit_hit = self.critical_rand.get_random()
                 if crit_hit == 1:

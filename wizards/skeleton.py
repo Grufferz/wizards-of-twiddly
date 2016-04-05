@@ -20,6 +20,7 @@ class Skeleton(BaseMonster):
         self.charmed_by = None
         self.charm_gfx = None
         self.undead = True
+        self.never_surrender = True
 
         self.native_depth = 10
         self.t = wizards.constants.SKELETON

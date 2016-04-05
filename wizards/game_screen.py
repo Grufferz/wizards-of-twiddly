@@ -1104,7 +1104,7 @@ class GameScreen(object):
             positions.append(start_pos)
         
         #self.monster_list = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
-        ml = self.mons_gen.get_initial_monsters(positions, self.im, 1, level)
+        ml = self.mons_gen.get_initial_monsters(positions, self.im, 1, level, self.level_score)
 
         for k in ml:
             self.monster_sprites.add(k)

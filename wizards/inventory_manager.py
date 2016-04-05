@@ -20,6 +20,14 @@ class InventoryManager():
         self._itemcount += 1
         return gold
 
+    def add_short_bow_to_monster(self, x, y):
+
+        name = "Short Bow"
+        value = 10
+        bow = wizards.inventory_object.ShortBow(self._itemcount, x, y, name, wizards.constants.WEAPON, True, value)
+        self._itemcount += 1
+        return bow
+
     def add_sword(self, x, y, t_ma, adj):
         name = "Sword"
         value = (random.randrange(6)+ 1) * 2

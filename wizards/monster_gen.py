@@ -75,13 +75,13 @@ class MonsterGenerator():
     def get_number_of_monsters(self):
         return self.monster_count
 
-    def get_initial_monsters(self, positions, im, mt, level):
+    def get_initial_monsters(self, positions, im, mt, level, level_score):
         ret_list = []
         m_type = "Wandering"
         random_getter = wizards.w_rand.WeightedRandomGuesser()
 
         mons_list = self.load_monster_probs()
-
+        # TODO Add special monsters for level_score = 12
         for i in mons_list:
             i.set_weight(level)
             if i.weight > 0:
@@ -105,10 +105,41 @@ class MonsterGenerator():
         return ret_list
 
     def create_bandit(self, id, x, y, m_type, level, im):
-        bandit = wizards.bandit.Bandit(id, x, y, "Bandit", level, m_type)
-        sword = im.add_sword_to_character()
-        sword.set_owner(bandit)
-        bandit.current_weapon = sword
+
+        bandit_prob = wizards.w_rand.WeightedRandomGuesser()
+        bandit_prob.add_bucket(1, 7)
+        bandit_prob.add_bucket(2, 4)
+        bandit_prob.add_bucket(3, 1)
+        bandit_prob.add_bucket(4, 1)
+        bandit_prob.init_buckets()
+
+        bandit_choice = bandit_prob.get_random()
+
+        if bandit_choice == 1:
+
+            bandit = wizards.bandit.Bandit(id, x, y, "Bandit", level, m_type)
+            sword = im.add_sword_to_character()
+            sword.set_owner(bandit)
+            bandit.current_weapon = sword
+
+        elif bandit_choice == 2:
+            bandit = wizards.bandit.BanditArcher(id, x, y, "Bandit Archer", level, m_type)
+            bow = im.add_short_bow_to_monster(0, 0)
+            bow.set_owner(bandit)
+            bandit.current_weapon = bow
+
+        elif bandit_choice == 3:
+            bandit = wizards.bandit.BanditLeader(id, x, y, "Bandit Leader", level + 2, m_type)
+            sword = im.add_sword_to_character()
+            sword.set_owner(bandit)
+            bandit.current_weapon = sword
+
+        elif bandit_choice == 4:
+            bandit = wizards.bandit.BanditBezerker(id, x, y, "Bandit Bezerker", level, m_type)
+            sword = im.add_sword_to_character()
+            sword.set_owner(bandit)
+            bandit.current_weapon = sword
+
         self.monster_count += 1
         return bandit
 

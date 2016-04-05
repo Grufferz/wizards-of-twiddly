@@ -9,7 +9,7 @@ class BaseMonster(pygame.sprite.Sprite):
         self.y = y        
         self.name = name
         self.level = level
-        self.orig_hp = self.get_hp(level)
+        self.orig_hp = self.get_hp(level) * 8
         self.hp = self.orig_hp  
         self.dead = False
         self.weapon = None
@@ -19,6 +19,7 @@ class BaseMonster(pygame.sprite.Sprite):
         self.morale = 6
         self.save_magic = 16
         self.undead = False
+        self.never_surrender = False
 
         self.weight = 0
 
