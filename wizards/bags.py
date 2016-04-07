@@ -37,13 +37,12 @@ class NumberBag():
         self._size = repeats
         self._low = low
         self._high = high
-
         self.init_bag()
 
     def init_bag(self):
         val = self._low
         counter = self._low
-        max_num = self._high * self._size
+        max_num = self._range * self._size
         while counter <= max_num:
             self._bag.append(val)
             counter += 1

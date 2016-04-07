@@ -15,6 +15,7 @@ class InventoryObject(pygame.sprite.Sprite):
         self.equipment = equipment
         self.wearable = False
         self.weapon = False
+        self.ranged = False
         self.owner = None
         self.magic = False
         self.use = False
@@ -42,6 +43,9 @@ class Gold(InventoryObject):
     def __init__(self, item_id, x, y, itemname, type, equipment, value):
         super().__init__(item_id, x, y, itemname, type, equipment, value)
         self.weight = 0
+
+    def __str__(self):
+        return self.get_description()
 
     def init_image(self):
         self.image = pygame.image.load(os.path.join("data", "yellow.png")).convert()
@@ -94,14 +98,15 @@ class Potion(InventoryObject):
 
 class ShortBow(InventoryObject):
 
-    def __init__(self, item_id, x, y, itemname, type, equipment, value, adjuster=None):
+    def __init__(self, item_id, x, y, itemname, type, equipment, value, adjuster):
         super().__init__(item_id, x, y, itemname, type, equipment, value)
         self.adjuster = adjuster
-        if adjuster is not None:
+        if adjuster > 0:
             self.magic = True
         self.max_damage = 6
         self.weight = 3
         self.weapon = True
+        self.ranged = True
         self.use = True
 
         self.ranges = [10, 25, 35]

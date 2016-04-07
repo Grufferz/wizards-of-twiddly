@@ -24,7 +24,7 @@ class InventoryManager():
 
         name = "Short Bow"
         value = 10
-        bow = wizards.inventory_object.ShortBow(self._itemcount, x, y, name, wizards.constants.WEAPON, True, value)
+        bow = wizards.inventory_object.ShortBow(self._itemcount, x, y, name, wizards.constants.WEAPON, True, value, 0)
         self._itemcount += 1
         return bow
 

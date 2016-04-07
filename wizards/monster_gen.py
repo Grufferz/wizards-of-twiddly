@@ -45,7 +45,8 @@ class MonsterGenerator():
             elif roll > 6:
                 ret_monster = wizards.wizard.Wizard(self.monster_count, x, y, "Wizard", level_roll, m_type)
                 # TODO Add hand weapon for wizards
-            self.monster_map[y][x] = self.monster_count
+            #self.monster_map[y][x] = self.monster_count
+            self.monster_map[(x,y)] = self.monster_count
             ret_list.append(ret_monster)
         
         return ret_list

@@ -36,3 +36,14 @@ def breadth_first_search_multi(graph, starts):
                 visited[next] = True
                 
     return distance
+
+
+def process_search_map(map):
+    ret_dict = {}
+    for key, value in map.items():
+        ret_dict[key] = (value * -6) // 5
+
+    return  ret_dict
+
+
+

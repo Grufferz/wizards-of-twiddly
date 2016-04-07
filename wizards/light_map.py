@@ -7,8 +7,7 @@ class LightMap(object):
         self.data = world
         self.width = wizards.constants.WIDTH
         self.height = wizards.constants.HEIGHT
-        #print(str(constants.HEIGHT) + " > " + str(len(self.data)))
-        #self.height = len(world[0]), len(world)
+
         self.light = []
         self.light = [[0 for x in range(self.width)] for y in range(self.height)]
         self.flag = 0
@@ -82,7 +81,6 @@ class LightMap(object):
         
     def do_fov(self, x, y, radius):
         self.flag += 1
-       # print("F=" + str(self.flag))
         for oct in range(8):
             self._cast_light(x, y, 1, 1.0, 0.0, radius, self.mult[0][oct], self.mult[1][oct], self.mult[2][oct], self.mult[3][oct], 0)
             

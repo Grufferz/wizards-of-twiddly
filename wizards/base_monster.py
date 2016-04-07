@@ -1,5 +1,5 @@
 import pygame, random
-import wizards.constants
+import wizards.constants, wizards.monster_ai
 
 class BaseMonster(pygame.sprite.Sprite):
     def __init__(self, mid, x, y, name, level, m_type):
@@ -9,7 +9,7 @@ class BaseMonster(pygame.sprite.Sprite):
         self.y = y        
         self.name = name
         self.level = level
-        self.orig_hp = self.get_hp(level) * 8
+        self.orig_hp = self.get_hp(level)
         self.hp = self.orig_hp  
         self.dead = False
         self.weapon = None
@@ -33,6 +33,8 @@ class BaseMonster(pygame.sprite.Sprite):
         self.asleep_for = 0
 
         # TODO Monster AI
+        self.ai = wizards.monster_ai.BasicAI()
+        self.moved = False
 
     def get_id(self):
         return self.monster_id
@@ -63,12 +65,22 @@ class BaseMonster(pygame.sprite.Sprite):
     def __eq__(self, other):
         return self.monster_id == other.monster_id
 
+    def __lt__(self, other):
+        return self.monster_id < other.monster_id
+
     def __hash__(self):
         return self.monster_id
 
-    def set_position(self, x, y):
+    def set_position(self, x, y, monster_map):
+
+        if (self.x, self.y) in monster_map:
+            del monster_map[(self.x, self.y)]
+
         self.x = x
         self.y = y
+        monster_map[(self.x, self.y)] = self.monster_id
+        self.rect.x = self.x * wizards.constants.CHAR_SIZE
+        self.rect.y = self.y * wizards.constants.CHAR_SIZE
         
     def is_valid_move(self, x, y, col_map):
         if col_map[y][x] == 0:
@@ -85,7 +97,7 @@ class BaseMonster(pygame.sprite.Sprite):
         """Get initial hitpoints, level * D8"""
         total = 0
         for i in range(num_of_dice):
-            total += (random.randrange(0,8)+1)
+            total += random.randrange(1,9)
         return total
 
     def in_panic(self):
@@ -100,3 +112,7 @@ class BaseMonster(pygame.sprite.Sprite):
             return self.current_weapon.max_damage
         else:
             return 0
+
+    def do_turn(self, player, player_map, collision_map, monster_map):
+        self.ai.update(self, player, player_map, collision_map, monster_map)
+        print(self.name + " " + str(self.monster_id) + " has moved")

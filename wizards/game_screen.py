@@ -1,6 +1,6 @@
 import pygame, random, math, os, time
 import wizards.constants
-import wizards.a_star, wizards.my_queue, wizards.square_grid
+import wizards.a_star, wizards.my_queue, wizards.square_grid, wizards.bags
 
 
 class GameScreen(object):
@@ -84,11 +84,15 @@ class GameScreen(object):
         self.player_moved = False
         print("PLAYER %s seconds --- " % (time.time() - start_time))
 
-        self.player_distance_map = self.set_player_bfs()
+        start_time = time.time()
+        self.sq_grid = wizards.square_grid.SquareGrid2(wizards.constants.WIDTH, wizards.constants.HEIGHT)
+        self.sq_grid.walls = self.walls
+
+        self.player_distance_map = self.set_player_bfs(self.sq_grid)
 
         self.special_zones = special_zones
         # define how long it should take to get through level
-        start_time = time.time()
+
         self.level_length = self.get_level_path() + 10
         self.steps_taken = 0
         print("PATH %s seconds --- " % (time.time() - start_time))
@@ -134,10 +138,12 @@ class GameScreen(object):
         print("TREASURE %s seconds --- " % (time.time() - start_time))
 
         # setup monsters
+        # TODO Cache monster graphics
         start_time = time.time()
         self.monsters_dead = 0
         self.total_monsters = 4 + (random.randrange(4) + 1) + (self.level // 5)
-        self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
+        #self.monster_map = [[0 for x in range(wizards.constants.WIDTH)] for y in range(wizards.constants.HEIGHT)]
+        self.monster_map = {}
         self.mons_gen = wizards.monster_gen.MonsterGenerator(self.level, self.monster_map, self.level_score)
         self.monster_list = []
         self.init_monsters_2(self.total_monsters, self.level)
@@ -156,78 +162,102 @@ class GameScreen(object):
         # initialise player status for level
         self.pl.init_stats(self.total_monsters, self.level_length)
 
+        #self.monster_queue = wizards.my_queue.PriorityQueue()
+
+        #for m in self.monster_list:
+        #    fv = self.turns_prob.draw()
+        #    self.monster_queue.put(m, fv)
+
+        self.player_turn = True
+        self.all_monsters_moved = False
+
+        #start_time = time.time()
+        #processed = wizards.searches.process_search_map(self.player_distance_map)
+        #print("PROCESS %s seconds --- " % (time.time() - start_time))
+
+        #start_time = time.time()
+        #t_list = []
+        #for t in self.treasure_list:
+        #    t_list.append((t.x, t.y))
+        #self.treasure_map = wizards.searches.breadth_first_search_multi(self.sq_grid, t_list)
+        #print("TREASURE MAP %s seconds --- " % (time.time() - start_time))
+
         print("TOTAL INIT %s seconds --- " % (time.time() - init_time))
 
 
-        
     def render(self, screen):
         screen.fill(wizards.constants.BLACK)
-        
-        if self.mouse_down:
-            if len(self.cursor_line) > 0:
-                c_list = pygame.sprite.Group()
-                for p in self.cursor_line:
-                    cx = p[0]
-                    cy = p[1]
-                    if self.collision_map[cy][cx] == 1:
-                        break
-                    temp_block = wizards.cursor_blocks.CursorBlocks(cx,cy)
-                    c_list.add(temp_block)
-                c_list.draw(screen)
-            
+
+        if self.player_turn:
+
+            if self.mouse_down:
+                if len(self.cursor_line) > 0:
+                    c_list = pygame.sprite.Group()
+                    for p in self.cursor_line:
+                        cx = p[0]
+                        cy = p[1]
+                        if self.collision_map[cy][cx] == 1:
+                            break
+                        temp_block = wizards.cursor_blocks.CursorBlocks(cx,cy)
+                        c_list.add(temp_block)
+                    c_list.draw(screen)
+
         self.building_sprites.draw(screen)
         self.all_sprite_list.draw(screen)
-           
+
+        # treasure sprites
+        self.treasure_sprites.draw(screen)
+
         #monsters
         for mons in self.monster_sprites.sprites():
             if self.light.lit(mons.x, mons.y) or self.show_all_monsters:
                 if not mons.dead:
                     screen.blit(mons.image, (mons.rect.x,mons.rect.y))
-                    
+
         #charmed gfx
         #self.charm_gfx.draw(screen)
         for mons in self.monster_list:
             if mons.charmed and not mons.dead and self.light.lit(mons.x, mons.y):
-                screen.blit(mons.charm_gfx.image, (mons.charm_gfx.x,mons.charm_gfx.y))                    
-        
+                screen.blit(mons.charm_gfx.image, (mons.charm_gfx.x,mons.charm_gfx.y))
+
         self.fire_sprites.draw(screen)
-        
+
         self.magic_sprites.draw(screen)
-        
+
         pygame.draw.rect(screen, wizards.constants.WHITE, (0,wizards.constants.MSGBOX_TOP,wizards.constants.MSGBOX_W,wizards.constants.MSGBOX_H))
-        
+
         text1 = self.font1.render('Current Spell: ' + self.pl.cur_spell.name, True, wizards.constants.BLACK)
         #target = self.get_item_cursor()
         text2 = self.font1.render('XP: ' + str(self.pl.xp), True, wizards.constants.BLACK)
 
         (mouse_x, mouse_y) = pygame.mouse.get_pos()
-        mx, my = self.convert_screen_pos_to_grid(mouse_x,mouse_y)          
+        mx, my = self.convert_screen_pos_to_grid(mouse_x,mouse_y)
         d = self.get_distance(self.pl.x, self.pl.y,mx, my)
         d2 = 0
         if len(self.cursor_line) > 0:
             tmp = self.cursor_line[-1]
             tx = tmp[0] #* constants.CHAR_SIZE
-            ty = tmp[1] #* constants.CHAR_SIZE            
+            ty = tmp[1] #* constants.CHAR_SIZE
             d2 = self.get_distance(self.pl.x, self.pl.y,tx, ty)
 
         ds = 'Distance: ' + str(d) + "(" + str(d2)+ ")"
         text3 = self.font1.render(ds, True, wizards.constants.BLACK)
 
         text24 = self.font1.render("Item: " + self.pl.get_current_item_string(), True, wizards.constants.BLACK)
-                
+
         screen.blit(text1, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+8))
         screen.blit(text2, (wizards.constants.MSG_GUT_1,wizards.constants.MSGBOX_TOP+32))
         screen.blit(text24, (wizards.constants.MSG_GUT_2, wizards.constants.MSGBOX_TOP + 8))
         screen.blit(text3, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+32))
-        
+
         start = self.pl.get_pos_tuple()
         end = (mx,my)
         self.cline2 = wizards.utils.get_line(start,end)
-        
+
         if len(self.cline2) > 0:
             text4 = self.font1.render('SEE: ' + str(self.can_see_target(self.cline2)), True, wizards.constants.BLACK)
             screen.blit(text4, (wizards.constants.MSG_GUT_3,wizards.constants.MSGBOX_TOP+32))
-            
+
         text5 = self.font1.render('Turn: ' + str(self.game_turn), True, wizards.constants.BLACK)
         screen.blit(text5, (wizards.constants.MSG_GUT_3,wizards.constants.MSGBOX_TOP+8))
 
@@ -237,31 +267,31 @@ class GameScreen(object):
         #    item = self.get_item_by_id(itemid)
         #    text6 = self.font1.render('Item: ' + item.itemname, True, wizards.constants.BLACK)
         #    screen.blit(text6, (wizards.constants.MSG_GUT_2,wizards.constants.MSGBOX_TOP+8))
-        
+
         #magic box
         pygame.draw.rect(screen, wizards.constants.MAG_DB, (wizards.constants.MB_BACK_L,wizards.constants.MB_BACK_T,wizards.constants.MB_BACK_W,wizards.constants.MB_BACK_H))
 
         #get magic percent
         m_perc = self.pl.get_magic_percent()
         m_box_w = int(wizards.constants.MAGIC_BOX_W * (m_perc/100))
-        
+
         pygame.draw.rect(screen, wizards.constants.MAG_BLUE, (wizards.constants.MAGIC_BOX_LEFT,wizards.constants.MAGIC_BOX_TOP,m_box_w,wizards.constants.MAGIC_BOX_H))
-        
+
         magic_text = self.font3.render('Mana: ' + str(self.pl.magic), True, wizards.constants.WHITE)
         screen.blit(magic_text, (wizards.constants.MAGIC_BOX_LEFT + 10,wizards.constants.MAGIC_BOX_TOP+2))
-        
+
         #health box
         pygame.draw.rect(screen, wizards.constants.HB_BACK, (wizards.constants.HB_BACK_L,wizards.constants.HB_BACK_T,wizards.constants.HB_BACK_W,wizards.constants.HB_BACK_H))
-        
+
         h_perc = self.pl.get_hp_percent()
         h_box_w = int(wizards.constants.HEALTH_BOX_W * (h_perc/100))
-        
+
         pygame.draw.rect(screen, wizards.constants.HB_RED, (wizards.constants.HEALTH_BOX_LEFT,wizards.constants.HEALTH_BOX_TOP,h_box_w,wizards.constants.HEALTH_BOX_H))
-        
+
         health_text = self.font3.render('Health: ' + str(self.pl.hp), True, wizards.constants.WHITE)
         screen.blit(health_text, (wizards.constants.HEALTH_BOX_LEFT + 10,wizards.constants.HEALTH_BOX_TOP+2))
-                
-        
+
+
         #damage
         kill_list = []
         for dmg in self.dmg_list:
@@ -273,8 +303,8 @@ class GameScreen(object):
                 kill_list.append(dmg)
         for kl in kill_list:
             self.dmg_list.remove(kl)
-            
-        
+
+
         #dead gfx
         for dgfx in self.dead_gfx.sprites():
             #dgfx.rect.x -= 2
@@ -292,24 +322,23 @@ class GameScreen(object):
                 tx += int(oldrect.centerx - newrect.centerx)
                 ty += int(oldrect.centery - newrect.centery)
                 screen.blit(tmp, (tx,ty))
-            
+
         #self.dead_gfx.draw(screen)
-        
-        # treasure sprites
-        self.treasure_sprites.draw(screen)
+
+
         self.player_sprite.draw(screen)
         # self.temp_sprites.draw(screen)
-                
+
         #pop up box
-        
+
         if self.pop_up_visible:
             player_quad = self.select_quadrant(self.pl.rect.x, self.pl.rect.y)
-            
+
             self.display_msg_box(screen, player_quad, "Hello!")
 
         if self.small_pop_up_visible:
             self.display_small_msg_box(screen, "GOIT")
-            
+
         #test for FOV
         #for y in range(constants.FHEIGHT):
             #for x in range(constants.FWIDTH):
@@ -317,7 +346,8 @@ class GameScreen(object):
                # print(str(self.light.lit(x,y)))
                 #if self.light.lit(x, y):
                     #screen.blit(self.pl.image, (x*constants.CHAR_SIZE, y*constants.CHAR_SIZE))
-                    
+
+
         
     
     def update(self):
@@ -335,7 +365,8 @@ class GameScreen(object):
             if mons.dead == True:
                 kill_list.append(mons)
                 self.collision_map[mons.y][mons.x] = 0
-                self.monster_map[mons.y][mons.x] = 0
+                if (mons.x, mons.y) in self.monster_map:
+                    del self.monster_map[(mons.x, mons.y)]
                 dgfx = wizards.dead_gfx.DeadGraphic(mons.x, mons.y)
                 self.dead_gfx.add(dgfx)
                 #self.drop_treasure(mons)
@@ -380,443 +411,494 @@ class GameScreen(object):
                 self.collision_map[cy][cx] = 0
 
     def handle_events(self, events):
-        moveLeft = moveRight = moveUp = moveDown = pick_up =  False
-        magic_cast = False
-        
-        for e in events:
-            if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_ESCAPE:
-                    self.manager.go_to(wizards.title_screen.TitleScreen())
-                elif e.key == pygame.K_w:
-                    moveUp = True
-                    moveDown = False
-                elif e.key == pygame.K_q:
-                    moveUp = True
-                    moveLeft = False
-                    moveDown = False
-                    moveRight = True
-                elif e.key == pygame.K_e:
-                    moveUp = True
-                    moveLeft = True
-                    moveDown = False
-                    moveRight = False
-                elif e.key == pygame.K_x or e.key == pygame.K_s:
-                    moveUp = False
-                    moveDown = True
-                elif e.key == pygame.K_a:
-                    moveLeft = True
-                    moveRight = False
-                elif e.key == pygame.K_d:
-                    moveRight = True
-                    moveLeft = False
-                elif e.key == pygame.K_c:
-                    moveUp = False
-                    moveLeft = True
-                    moveDown = True
-                    moveRight = False
-                elif e.key == pygame.K_z:
-                    moveUp = False
-                    moveLeft = False
-                    moveDown = True
-                    moveRight = True
-                elif e.key == pygame.K_u:
-                    msg = self.pl.use_current_item()
-                    if msg != "":
-                        self.small_message = msg
-                        self.message_countdown = 140
-                        self.small_pop_up_visible = True
-                elif e.key == pygame.K_p:
-                    pick_up = True
-                elif e.key == pygame.K_n:
-                    self.cycle_spell()
-                elif e.key == pygame.K_LEFTBRACKET:
-                    self.pl.cycle_cur_item_up()
-                elif e.key == pygame.K_RIGHTBRACKET:
-                    self.pl.cycle_cur_item_down()
-                elif e.key == pygame.K_m:
-                    self.toggle_msg_box()
-                elif e.key == pygame.K_l:
-                    if self.show_all_monsters:
-                        self.show_all_monsters = False
-                    else:
-                        self.show_all_monsters = True
-            
-            self.lastmovetime = time.time() - 1
-            
-            mx = 0
-            my = 0 
-            
-            del self.cursor_line[:]
-            
-            (mouse_x, mouse_y) = pygame.mouse.get_pos()
-            mx, my = self.convert_screen_pos_to_grid(mouse_x,mouse_y)   
 
-            start = self.pl.get_pos_tuple()
-            end = (mx,my)
-            self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
-            
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                
-                self.mouse_down = True
+        if self.player_turn:
 
-                if len(self.cursor_line) > 0:
-                    tmp = self.cursor_line[-1]
-                    tx = tmp[0] * wizards.constants.CHAR_SIZE
-                    ty = tmp[1] * wizards.constants.CHAR_SIZE
-                    
-                    #has player enough magic?
-                    
-                    if self.pl.can_cast_spell(self.pl.cur_spell.magic_cost):
-                        
-                        magic_cast = True
-                        self.player_moved = True
+            moveLeft = moveRight = moveUp = moveDown = pick_up =  False
+            magic_cast = False
 
-                        # ranged spells
-                        if self.pl.cur_spell.range is not None:
+            for e in events:
+                if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_ESCAPE:
+                        self.manager.go_to(wizards.title_screen.TitleScreen())
+                    elif e.key == pygame.K_w:
+                        moveUp = True
+                        moveDown = False
+                    elif e.key == pygame.K_q:
+                        moveUp = True
+                        moveLeft = False
+                        moveDown = False
+                        moveRight = True
+                    elif e.key == pygame.K_e:
+                        moveUp = True
+                        moveLeft = True
+                        moveDown = False
+                        moveRight = False
+                    elif e.key == pygame.K_x or e.key == pygame.K_s:
+                        moveUp = False
+                        moveDown = True
+                    elif e.key == pygame.K_a:
+                        moveLeft = True
+                        moveRight = False
+                    elif e.key == pygame.K_d:
+                        moveRight = True
+                        moveLeft = False
+                    elif e.key == pygame.K_c:
+                        moveUp = False
+                        moveLeft = True
+                        moveDown = True
+                        moveRight = False
+                    elif e.key == pygame.K_z:
+                        moveUp = False
+                        moveLeft = False
+                        moveDown = True
+                        moveRight = True
+                    elif e.key == pygame.K_u:
+                        msg = self.pl.use_current_item()
+                        if msg != "":
+                            self.small_message = msg
+                            self.message_countdown = 140
+                            self.small_pop_up_visible = True
+                    elif e.key == pygame.K_p:
+                        pick_up = True
+                    elif e.key == pygame.K_n:
+                        self.cycle_spell()
+                    elif e.key == pygame.K_LEFTBRACKET:
+                        self.pl.cycle_cur_item_up()
+                    elif e.key == pygame.K_RIGHTBRACKET:
+                        self.pl.cycle_cur_item_down()
+                    elif e.key == pygame.K_m:
+                        self.toggle_msg_box()
+                    elif e.key == pygame.K_l:
+                        if self.show_all_monsters:
+                            self.show_all_monsters = False
+                        else:
+                            self.show_all_monsters = True
 
-                            #check accuracy
+                self.lastmovetime = time.time() - 1
 
-                            # TODO Add max range to spells
+                mx = 0
+                my = 0
 
-                            dis = self.get_distance(start[0],start[1],tmp[0],tmp[1])
-                            dis_mod = self.get_distance_mod(dis)
-                            self.accuracy = self.base_accuracy + dis_mod
-                            hit = self.ranged_combat(self.accuracy)
+                del self.cursor_line[:]
 
-                            # TODO Abstract ranged combat a bit more
+                (mouse_x, mouse_y) = pygame.mouse.get_pos()
+                mx, my = self.convert_screen_pos_to_grid(mouse_x,mouse_y)
 
-                            #if miss change hit location
-                            if not hit:
-                                base_miss = random.randrange(1,4) + dis_mod
-                                hmod_x = base_miss * wizards.constants.CHAR_SIZE
-                                hmod_y = base_miss * wizards.constants.CHAR_SIZE
-                                if random.randrange(10) > 4:
-                                    rmod = 1
-                                else:
-                                    rmod = -1
-                                # TODO Is this miss correct?
-                                tx += (hmod_x * rmod)
-                                ty += (hmod_y * rmod)
+                start = self.pl.get_pos_tuple()
+                end = (mx,my)
+                self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
 
-                                #get new line
-                                start = self.pl.get_pos_tuple()
-                                nx,ny = self.convert_screen_pos_to_grid(mouse_x,mouse_y)
-                                end = (nx,ny)
-                                self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
+                if e.type == pygame.MOUSEBUTTONDOWN:
 
-                                tmp = self.cursor_line[-1]
-                                tx = tmp[0] * wizards.constants.CHAR_SIZE
-                                ty = tmp[1] * wizards.constants.CHAR_SIZE
+                    self.mouse_down = True
 
-                        # check what sort of spell
+                    if len(self.cursor_line) > 0:
+                        tmp = self.cursor_line[-1]
+                        tx = tmp[0] * wizards.constants.CHAR_SIZE
+                        ty = tmp[1] * wizards.constants.CHAR_SIZE
 
-                        # fireball = 1
-                        if self.pl.cur_spell.spell_type == 1:
-                            self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
-                            tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
-                            tiny_x = tiny_tup[0]
-                            tiny_y = tiny_tup[1]
-                            
-                            burn_list = self.get_burnt_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
-                            
-                            explosion_list = self.get_radius_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
-                            
-                            grid_list = []
-                            for bl in burn_list:
-                                self.set_tree_on_fire(bl[0],bl[1])
-                            #damage monsters
-                            for el in explosion_list:
-                                grid_pos = self.convert_small_to_big(el[0],el[1])
-                                if grid_pos not in grid_list:
-                                    grid_list.append(grid_pos)  
-                            
-                            for gp in grid_list:
-                                ex_x = gp[0]
-                                ex_y = gp[1]
-                                for monster in self.monster_list:
-                                    #print(str(monster.x) + " >> " + str(ex_x))
-                                    # saving throw
-                                    roll = random.randrange(20) + 1
-                                    if monster.x == ex_x and monster.y == ex_y and (roll < monster.save_magic):
-                                        #print(monster.name)
-                                        # take damage
-                                        dmg = random.randrange(1,self.pl.cur_spell.damage)
-                                        monster.take_damage(dmg)
-                                        # create damage graphic
-                                        dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
-                                        self.dmg_list.append(dm_token)
-                                        # if monster dead add xp
-                                        if monster.dead:
-                                            self.pl.mons_killed_magic += 1
-                                            cr = wizards.resolve_combat.CombatResolver()
-                                            xp = cr.get_xp_for_monster(monster.level)
-                                            self.pl.add_xp(xp)
-                                            self.pl.total_monsters_killed[self.level] += 1
+                        #has player enough magic?
 
-                        # charm spell
-                        elif self.pl.cur_spell.spell_type == 2:
-                            duration = self.pl.cur_spell.get_charm_duration()
+                        if self.pl.can_cast_spell(self.pl.cur_spell.magic_cost):
 
-                            self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
-                            tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
-                            tiny_x = tiny_tup[0]
-                            tiny_y = tiny_tup[1]
-                            
-                            grid_list = []
-                            explosion_list = self.get_radius_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
-                            for el in explosion_list:
-                                grid_pos = self.convert_small_to_big(el[0],el[1])
-                                if grid_pos not in grid_list:
-                                    grid_list.append(grid_pos)  
-                            
-                            for gp in grid_list:
-                                ex_x = gp[0]
-                                ex_y = gp[1]
-                                for monster in self.monster_list:
-                                    if monster.x == ex_x and monster.y == ex_y and monster.charmable:
-                                        ch = self.pl.cur_spell.test_charm(monster.save_magic)
-                                        print("CHARMED=" + str(ch))
-                                        if ch:
-                                            #xp = monster.rect.centerx
-                                            #yp = monster.rect.centery
-                                            monster.charmed = True
-                                            monster.charmed_by = self.pl
-                                            monster.charm_duration = duration
+                            magic_cast = True
+                            self.player_moved = True
 
-                                            xp = monster.rect.x - 4
-                                            yp = monster.rect.y - 4
-                                            c = wizards.charmed_gfx.Charmed(xp,yp)
-                                            monster.charm_gfx = c
-                                            #self.charm_gfx.add(c)
+                            # ranged spells
+                            if self.pl.cur_spell.range is not None:
 
-                        # stoneskin spell
-                        if self.pl.cur_spell.spell_type == 3:
-                            self.pl.ac = 4
-                            self.pl.ac_missiles = 2
-                            st = "AC Now " + str(self.pl.ac) + " for " + str(self.pl.cur_spell.duration) + " turns"
-                            self.small_message = st
+                                #check accuracy
+
+                                # TODO Add max range to spells
+
+                                dis = self.get_distance(start[0],start[1],tmp[0],tmp[1])
+                                dis_mod = self.get_distance_mod(dis)
+                                self.accuracy = self.base_accuracy + dis_mod
+                                hit = self.ranged_combat(self.accuracy)
+
+                                # TODO Abstract ranged combat a bit more
+
+                                #if miss change hit location
+                                if not hit:
+                                    base_miss = random.randrange(1,4) + dis_mod
+                                    hmod_x = base_miss * wizards.constants.CHAR_SIZE
+                                    hmod_y = base_miss * wizards.constants.CHAR_SIZE
+                                    if random.randrange(10) > 4:
+                                        rmod = 1
+                                    else:
+                                        rmod = -1
+                                    # TODO Is this miss correct?
+                                    tx += (hmod_x * rmod)
+                                    ty += (hmod_y * rmod)
+
+                                    #get new line
+                                    start = self.pl.get_pos_tuple()
+                                    nx,ny = self.convert_screen_pos_to_grid(mouse_x,mouse_y)
+                                    end = (nx,ny)
+                                    self.cursor_line = self.block_list(wizards.utils.get_line(start,end))
+
+                                    tmp = self.cursor_line[-1]
+                                    tx = tmp[0] * wizards.constants.CHAR_SIZE
+                                    ty = tmp[1] * wizards.constants.CHAR_SIZE
+
+                            # check what sort of spell
+
+                            # fireball = 1
+                            if self.pl.cur_spell.spell_type == 1:
+                                self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
+                                tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
+                                tiny_x = tiny_tup[0]
+                                tiny_y = tiny_tup[1]
+
+                                burn_list = self.get_burnt_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
+
+                                explosion_list = self.get_radius_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
+
+                                grid_list = []
+                                for bl in burn_list:
+                                    self.set_tree_on_fire(bl[0],bl[1])
+                                #damage monsters
+                                for el in explosion_list:
+                                    grid_pos = self.convert_small_to_big(el[0],el[1])
+                                    if grid_pos not in grid_list:
+                                        grid_list.append(grid_pos)
+
+                                for gp in grid_list:
+                                    ex_x = gp[0]
+                                    ex_y = gp[1]
+                                    for monster in self.monster_list:
+                                        #print(str(monster.x) + " >> " + str(ex_x))
+                                        # saving throw
+                                        roll = random.randrange(20) + 1
+                                        if monster.x == ex_x and monster.y == ex_y and (roll < monster.save_magic):
+                                            #print(monster.name)
+                                            # take damage
+                                            dmg = random.randrange(1,self.pl.cur_spell.damage)
+                                            monster.take_damage(dmg)
+                                            # create damage graphic
+                                            dm_token = wizards.damage_token.DamageToken(monster.x, monster.y-10, dmg)
+                                            self.dmg_list.append(dm_token)
+                                            # if monster dead add xp
+                                            if monster.dead:
+                                                self.pl.mons_killed_magic += 1
+                                                cr = wizards.resolve_combat.CombatResolver()
+                                                xp = cr.get_xp_for_monster(monster.level)
+                                                self.pl.add_xp(xp)
+                                                self.pl.total_monsters_killed[self.level] += 1
+
+                            # charm spell
+                            elif self.pl.cur_spell.spell_type == 2:
+                                duration = self.pl.cur_spell.get_charm_duration()
+
+                                self.create_magic_explosion(tx // wizards.constants.CHAR_SIZE,ty // wizards.constants.CHAR_SIZE)
+                                tiny_tup = self.convert_screen_pos_to_tiny_grid(tx,ty)
+                                tiny_x = tiny_tup[0]
+                                tiny_y = tiny_tup[1]
+
+                                grid_list = []
+                                explosion_list = self.get_radius_list(tiny_x,tiny_y,self.pl.cur_spell.radius)
+                                for el in explosion_list:
+                                    grid_pos = self.convert_small_to_big(el[0],el[1])
+                                    if grid_pos not in grid_list:
+                                        grid_list.append(grid_pos)
+
+                                for gp in grid_list:
+                                    ex_x = gp[0]
+                                    ex_y = gp[1]
+                                    for monster in self.monster_list:
+                                        if monster.x == ex_x and monster.y == ex_y and monster.charmable:
+                                            ch = self.pl.cur_spell.test_charm(monster.save_magic)
+                                            print("CHARMED=" + str(ch))
+                                            if ch:
+                                                #xp = monster.rect.centerx
+                                                #yp = monster.rect.centery
+                                                monster.charmed = True
+                                                monster.charmed_by = self.pl
+                                                monster.charm_duration = duration
+
+                                                xp = monster.rect.x - 4
+                                                yp = monster.rect.y - 4
+                                                c = wizards.charmed_gfx.Charmed(xp,yp)
+                                                monster.charm_gfx = c
+                                                #self.charm_gfx.add(c)
+
+                            # stoneskin spell
+                            if self.pl.cur_spell.spell_type == 3:
+                                self.pl.ac = 4
+                                self.pl.ac_missiles = 2
+                                st = "AC Now " + str(self.pl.ac) + " for " + str(self.pl.cur_spell.duration) + " turns"
+                                self.small_message = st
+                                self.message_countdown = 140
+                                self.small_pop_up_visible = True
+
+
+                            #use magic
+                            self.pl.deplete_magic(self.pl.cur_spell.magic_cost)
+
+                else:
+                    self.mouse_down = False
+
+                if e.type == pygame.KEYUP:
+                    if e.key == pygame.K_w:
+                        moveUp = False
+                    elif e.key == pygame.K_x:
+                        moveDown = False
+                    elif e.key == pygame.K_a:
+                        moveLeft = False
+                    elif e.key == pygame.K_d:
+                        moveRight = False
+                    elif e.key == pygame.K_q:
+                        moveUp = False
+                        moveLeft = False
+                    elif e.key == pygame.K_e:
+                        moveUp = False
+                        moveRight = False
+                    elif e.key == pygame.K_c:
+                        moveDown = False
+                        moveRight = False
+                    elif e.key == pygame.K_z:
+                        moveDown = False
+                        moveLeft = False
+                    elif e.key == pygame.K_p:
+                        pick_up = False
+
+                if time.time() - 0.5 > self.lastmovetime:
+
+                    # move up
+                    if moveUp and not moveLeft and not moveRight and not moveDown:
+                        if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x, self.pl.y-1):
+                                self.pl.update_player(0, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level)
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move down
+                    elif moveDown and not moveLeft and not moveRight and not moveUp:
+                        if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
+                                self.pl.update_player(2, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move left
+                    elif moveLeft and not moveUp and not moveDown and not moveRight:
+                        if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
+                            if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
+                                self.pl.update_player(3, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move right
+                    elif moveRight and not moveUp and not moveDown and not moveLeft:
+                        if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
+                            if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
+                                self.pl.update_player(1, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move NW
+                    elif moveRight and moveUp and not moveDown and not moveLeft:
+                        if self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
+                                self.pl.update_player(7, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move NE
+                    elif moveLeft and moveUp and not moveDown and not moveRight:
+                        if self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
+                                self.pl.update_player(4, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move SE
+                    elif moveDown and moveLeft and not moveUp and not moveRight:
+                        if self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
+                                self.pl.update_player(5, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # move SW
+                    elif moveDown and moveRight and not moveUp and not moveLeft:
+                        if self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1) == 0:
+                            if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
+                                self.pl.update_player(6, self.collision_map)
+                                self.player_moved = True
+                                self.pl.steps_taken += 1
+                            else:
+                                self.clean_up()
+                                self.pl.set_stats_for_level(self.level)
+                                self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
+                        else:
+                            mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
+                            mons = self.get_monster_by_id(mid)
+                            #combat_resolver = wizards.resolve_combat.CombatResolver()
+                            dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
+                                                                     )
+                            dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
+                            self.dmg_list.append(dm_token)
+                            self.player_moved = True
+                    # pick up item if we are standing on one
+                    elif pick_up:
+                        item_id = self.cell_contains_item(self.pl.x, self.pl.y)
+                        if item_id is not None:
+                            item = self.get_item_by_id(item_id)
+                            item.set_owner(self.pl)
+                            self.pl.add_item_to_inventory(item)
+                            self.pl.add_xp(item.value)
+                            #self.treasure_map[self.pl.y][self.pl.x] = 0
+                            del self.treasure_dict[(self.pl.y, self.pl.x)]
+                            self.treasure_sprites.remove(item)
+                            self.small_message = item.get_description()
                             self.message_countdown = 140
                             self.small_pop_up_visible = True
 
+                    # restore magic
+                    if not magic_cast and self.player_moved == True:
+                        self.pl.restore_magic(self.pl.magic_restore)
 
-                        #use magic
-                        self.pl.deplete_magic(self.pl.cur_spell.magic_cost)
-                                
-            else:
-                self.mouse_down = False
-            
-            if e.type == pygame.KEYUP:
-                if e.key == pygame.K_w:
-                    moveUp = False
-                elif e.key == pygame.K_x:
-                    moveDown = False
-                elif e.key == pygame.K_a:
-                    moveLeft = False
-                elif e.key == pygame.K_d:
-                    moveRight = False
-                elif e.key == pygame.K_q:
-                    moveUp = False
-                    moveLeft = False
-                elif e.key == pygame.K_e:
-                    moveUp = False
-                    moveRight = False
-                elif e.key == pygame.K_c:
-                    moveDown = False
-                    moveRight = False
-                elif e.key == pygame.K_z:
-                    moveDown = False
-                    moveLeft = False
-                elif e.key == pygame.K_p:
-                    pick_up = False
-                    
-            if time.time() - 0.5 > self.lastmovetime:
+                    self.lastmovetime = time.time()
+                    if self.player_moved:
+                        if len(self.pl.active_spells) > 0:
+                            self.update_spells()
+                        self.player_moved = False
+                        self.game_turn += 1
+                        self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
 
-                # move up
-                if moveUp and not moveLeft and not moveRight and not moveDown:
-                    if self.cell_contains_monster(self.pl.x, self.pl.y-1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x, self.pl.y-1):
-                            self.pl.update_player(0, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x, self.pl.y-1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level)
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move down
-                elif moveDown and not moveLeft and not moveRight and not moveUp:
-                    if self.cell_contains_monster(self.pl.x, self.pl.y + 1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x, self.pl.y + 1):
-                            self.pl.update_player(2, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x, self.pl.y + 1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move left
-                elif moveLeft and not moveUp and not moveDown and not moveRight:
-                    if self.cell_contains_monster(self.pl.x-1, self.pl.y) == 0:
-                        if not self.is_in_exit_zone(self.pl.x-1, self.pl.y):
-                            self.pl.update_player(3, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x-1, self.pl.y)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move right
-                elif moveRight and not moveUp and not moveDown and not moveLeft:
-                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y) == 0:
-                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y):
-                            self.pl.update_player(1, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move NW
-                elif moveRight and moveUp and not moveDown and not moveLeft:
-                    if self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y - 1):
-                            self.pl.update_player(7, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y - 1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move NE
-                elif moveLeft and moveUp and not moveDown and not moveRight:
-                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y - 1):
-                            self.pl.update_player(4, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 1))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y - 1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move SE
-                elif moveDown and moveLeft and not moveUp and not moveRight:
-                    if self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x + 1, self.pl.y + 1):
-                            self.pl.update_player(5, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x + 1, self.pl.y + 1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # move SW
-                elif moveDown and moveRight and not moveUp and not moveLeft:
-                    if self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1) == 0:
-                        if not self.is_in_exit_zone(self.pl.x - 1, self.pl.y + 1):
-                            self.pl.update_player(6, self.collision_map)
-                            self.player_moved = True
-                            self.pl.steps_taken += 1
-                        else:
-                            self.clean_up()
-                            self.pl.set_stats_for_level(self.level)
-                            self.manager.go_to(wizards.exit_level_screen.ExitScreen(self.pl, self.level, 2))
-                    else:
-                        mid = self.cell_contains_monster(self.pl.x - 1, self.pl.y + 1)
-                        mons = self.get_monster_by_id(mid)
-                        #combat_resolver = wizards.resolve_combat.CombatResolver()
-                        dmg = self.combat_resolver.resolve_player_hit(self.pl, mons, self.monsters_dead, self.level
-                                                                 )
-                        dm_token = wizards.damage_token.DamageToken(mons.x, mons.y - 10, dmg)
-                        self.dmg_list.append(dm_token)
-                        self.player_moved = True
-                # pick up item if we are standing on one
-                elif pick_up:
-                    item_id = self.cell_contains_item(self.pl.x, self.pl.y)
-                    if item_id is not None:
-                        item = self.get_item_by_id(item_id)
-                        item.set_owner(self.pl)
-                        self.pl.add_item_to_inventory(item)
-                        self.pl.add_xp(item.value)
-                        #self.treasure_map[self.pl.y][self.pl.x] = 0
-                        del self.treasure_dict[(self.pl.y, self.pl.x)]
-                        self.treasure_sprites.remove(item)
-                        self.small_message = item.get_description()
-                        self.message_countdown = 140
-                        self.small_pop_up_visible = True
+                        self.player_turn = False
+                        self.all_monsters_moved = False
 
-                # restore magic
-                if not magic_cast and self.player_moved == True:
-                    self.pl.restore_magic(self.pl.magic_restore)
-                    
-                self.lastmovetime = time.time()
-                if self.player_moved:
-                    if len(self.pl.active_spells) > 0:
-                        self.update_spells()
-                    self.player_moved = False
-                    self.game_turn += 1
-                    self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
-    
+        else:
+
+            # monsters turn
+
+            #monster_queue = wizards.my_queue.PriorityQueue()
+
+            print("SIZE OF MONSTER LIST = " + str(len(self.monster_list)))
+
+            for m in self.monster_list:
+                if not m.dead:
+                    m.do_turn(self.pl, self.player_distance_map, self.collision_map, self.monster_map)
+                #fv = self.turns_prob.draw()
+                #monster_queue.put(m, fv)
+
+            self.all_monsters_moved = True
+            self.player_turn = True
+            self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
+
+                #for i in range(len(monster_queue.elements)):
+                    #m = monster_queue.get()
+                    #if not m.dead:
+
+
+                #if self.monster_queue.empty():
+
+                 #   num_mons = len(self.monster_list)
+
+                    #self.turns_prob = wizards.bags.NumberBag(1, num_mons, 1)
+
+                    #for m in self.monster_list:
+                    #    if not m.dead:
+                    #        fv = self.turns_prob.draw()
+                    #        self.monster_queue.put(m, fv)
+
+
+
+            """
+            for e in events:
+                if e.type == pygame.KEYDOWN:
+                    if e.key == pygame.K_ESCAPE:
+                        self.manager.go_to(wizards.title_screen.TitleScreen())
+                    elif e.key == pygame.K_SPACE and self.all_monsters_moved:
+                        self.player_turn = True
+            """
+
     def add_tree_gfx(self):
 
         for y in range(wizards.constants.FHEIGHT):
@@ -890,7 +972,6 @@ class GameScreen(object):
         for i in range(num):
             mag = wizards.magic_spell.MagicSpell(x,y)
             self.magic_sprites.add(mag)
-            
     
     def block_list(self, lst):
         #returns part of list if blocked
@@ -907,14 +988,6 @@ class GameScreen(object):
                 else:
                     counter += 1
         return lst
-    
-    #def populate_objects(self):
-        #for y in range(constants.FHEIGHT):
-            #for x in range(constants.FWIDTH):
-                #if self.world[y][x] == 1:
-                    #f = game_objects.FireEffect(25.0)
-                    #self.object_map[y][x] = game_objects.TreeWood(x,y,f)
-                    
     
     def set_tree_on_fire(self, x, y):
         #print(str(x) + " _ " + str(y))
@@ -1109,7 +1182,7 @@ class GameScreen(object):
         for k in ml:
             self.monster_sprites.add(k)
             self.monster_list.append(k)
-            self.monster_map[k.y][k.x] = k.monster_id
+            self.monster_map[(k.x,k.y)] = k.monster_id
 
         for item in self.monster_list:
             print(str(item))
@@ -1166,7 +1239,6 @@ class GameScreen(object):
         
     def set_treasure(self):
 
-
         max_val = 0
         add_list = []
         #for key,v in dis_map.items():
@@ -1204,7 +1276,10 @@ class GameScreen(object):
             self.treasure_sprites.add(t)
 
     def cell_contains_monster(self, x, y):
-        return self.monster_map[y][x]
+        if (x,y) in self.monster_map:
+            return self.monster_map[(x,y)]
+        else:
+            return 0
 
     def cell_contains_item(self, x, y):
         #return self.treasure_map[y][x]
@@ -1322,13 +1397,10 @@ class GameScreen(object):
             for sp in remove_list:
                 self.pl.active_spells.remove(sp)
 
-    def set_player_bfs(self):
+    def set_player_bfs(self, grid):
         st = time.time()
-        sq = wizards.square_grid.SquareGrid2(wizards.constants.WIDTH, wizards.constants.HEIGHT)
-        sq.walls = self.walls
-
         pl_start = (self.pl.x, self.pl.y)
-        dis_map = wizards.searches.breadth_first_search(sq, pl_start)
+        dis_map = wizards.searches.breadth_first_search(grid, pl_start)
         print("BFS %s seconds --- " % (time.time() - st))
         return dis_map
 
@@ -1336,9 +1408,25 @@ class GameScreen(object):
         s = ""
         for y in range(wizards.constants.HEIGHT):
             for x in range(wizards.constants.WIDTH):
-                s += str(m[y][x])
+                if (x,y) in m:
+                    v = m[(x,y)]
+                    s += ('{0:04d}'.format(v))
+                    s += " "
+                else:
+                    s += "XXXX "
             s += "\n"
         print(s)
+
+    def print_array(self, arr):
+        s = ""
+        for y in range(len(arr)):
+            for x in range(len(arr[0])):
+                v = arr[y][x]
+                s += ('{0:03d}'.format(v))
+                s += " "
+            s += "\n"
+        print(s)
+
 
 
 

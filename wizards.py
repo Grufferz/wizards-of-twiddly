@@ -5,7 +5,7 @@ from wizards import *
 def main():
     pygame.init()
     # print(str(now))
-    #random.seed(constants.NOW)
+    #random.seed(constants.NOW)s
     screen = pygame.display.set_mode(constants.SCREENSIZE)
     timer = pygame.time.Clock()
     pygame.display.set_caption("The Wizards Of Twiddly")

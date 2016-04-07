@@ -52,7 +52,7 @@ class BanditBezerker(Bandit):
         super().__init__(mid, x, y, name, level, m_type)
         self.morale = 12
         self.never_surrender = True
-        self.orig_hp = self.get_hp(level) * 9
+        self.orig_hp = self.get_hp(level)  + self.level
         self.hp = self.orig_hp
 
 
