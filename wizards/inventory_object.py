@@ -38,6 +38,13 @@ class InventoryObject(pygame.sprite.Sprite):
         return self.itemname
 
 
+class Arrow(InventoryObject):
+
+    def __init__(self, item_id, x, y, itemname, type, equipment, value, quan):
+        super().__init__(item_id, x, y, itemname, type, equipment, value)
+        self.weight = 0
+        self.quantity = quan
+
 class Gold(InventoryObject):
 
     def __init__(self, item_id, x, y, itemname, type, equipment, value):
@@ -132,6 +139,7 @@ class Sword(InventoryObject):
         self.weight = 3
         self.weapon = True
         self.use = True
+        self.ranged = False
         # TODO Work out weapon damages
 
     def init_image(self):

@@ -14,12 +14,14 @@ class BaseMonster(pygame.sprite.Sprite):
         self.dead = False
         self.weapon = None
         self.current_weapon = None
+        self.inventory = []
         self.m_type = m_type
         self.fleeing = False
         self.morale = 6
         self.save_magic = 16
         self.undead = False
         self.never_surrender = False
+        self.hit_chance = wizards.bags.NumberBag(1, 20, 2)
 
         self.weight = 0
 
@@ -33,8 +35,11 @@ class BaseMonster(pygame.sprite.Sprite):
         self.asleep_for = 0
 
         # TODO Monster AI
-        self.ai = wizards.monster_ai.BasicAI()
+        self.ai = None
+        #self.ai = self.set_ai(wizards.monster_ai.PassiveAI(coll_map))
+        self.level_seen = {}
         self.moved = False
+        self.player_seen = False
 
     def get_id(self):
         return self.monster_id
@@ -70,6 +75,9 @@ class BaseMonster(pygame.sprite.Sprite):
 
     def __hash__(self):
         return self.monster_id
+
+    def set_ai(self, a):
+        self.ai = a
 
     def set_position(self, x, y, monster_map):
 
@@ -113,6 +121,10 @@ class BaseMonster(pygame.sprite.Sprite):
         else:
             return 0
 
-    def do_turn(self, player, player_map, collision_map, monster_map):
-        self.ai.update(self, player, player_map, collision_map, monster_map)
+    def do_turn(self, player, player_map, collision_map, monster_map, combat_resovler):
+        if self.ai is not None:
+            self.ai.update(self, player, player_map, collision_map, monster_map, combat_resovler)
         print(self.name + " " + str(self.monster_id) + " has moved")
+
+    def add_item_to_inventory(self, i):
+        self.inventory.append(i)

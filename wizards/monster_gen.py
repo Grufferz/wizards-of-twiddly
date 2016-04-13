@@ -127,6 +127,8 @@ class MonsterGenerator():
             bandit = wizards.bandit.BanditArcher(id, x, y, "Bandit Archer", level, m_type)
             bow = im.add_short_bow_to_monster(0, 0)
             bow.set_owner(bandit)
+            arrows = im.add_arrows_to_char(12)
+            bandit.add_item_to_inventory(arrows)
             bandit.current_weapon = bow
 
         elif bandit_choice == 3:

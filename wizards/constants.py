@@ -101,6 +101,7 @@ SCROLL = 4
 ARMOUR = 5
 FOOD = 6
 POTION = 7
+AMMO = 8
 
 
 PL_FILE = "pl.gz"

@@ -20,6 +20,12 @@ class InventoryManager():
         self._itemcount += 1
         return gold
 
+    def add_arrows_to_char(self, quantity):
+        name = "Arrow"
+        arrow = wizards.inventory_object.Arrow(self._itemcount, 0, 0, name, wizards.constants.AMMO, False, 0, quantity)
+        self._itemcount += 1
+        return arrow
+
     def add_short_bow_to_monster(self, x, y):
 
         name = "Short Bow"

@@ -39,7 +39,8 @@ class Player(pygame.sprite.Sprite):
         self.hit_chance = wizards.bags.NumberBag(1, 20, 2)
 
         self.dead = False
-        self.sight = 40
+        self.dead_countdown = 120
+        self.sight = 30
         self.xp = 0
         self.level = 1
         self.game_level = 1

@@ -1,6 +1,6 @@
 import pygame, random, math, os, time
 import wizards.constants
-import wizards.a_star, wizards.my_queue, wizards.square_grid, wizards.bags
+import wizards.a_star, wizards.my_queue, wizards.square_grid, wizards.bags, wizards.monster_ai
 
 
 class GameScreen(object):
@@ -170,6 +170,7 @@ class GameScreen(object):
 
         self.player_turn = True
         self.all_monsters_moved = False
+        self.monster_to_take_turn = []
 
         #start_time = time.time()
         #processed = wizards.searches.process_search_map(self.player_distance_map)
@@ -353,6 +354,16 @@ class GameScreen(object):
     def update(self):
         self.turn += 1
 
+        if not self.player_turn:
+            if len(self.monster_to_take_turn) > 0:
+                cur_monster = self.monster_to_take_turn.pop(0)
+                player_dmg = cur_monster.do_turn(self.pl, self.player_distance_map, self.collision_map, self.monster_map, self.combat_resolver)
+            else:
+                self.all_monsters_moved = True
+                self.player_turn = True
+                self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
+
+
         if self.message_countdown > 0:
             self.message_countdown -= 1
             if self.message_countdown <= 0:
@@ -364,7 +375,7 @@ class GameScreen(object):
         for mons in self.monster_list:
             if mons.dead == True:
                 kill_list.append(mons)
-                self.collision_map[mons.y][mons.x] = 0
+                #self.collision_map[mons.y][mons.x] = 0
                 if (mons.x, mons.y) in self.monster_map:
                     del self.monster_map[(mons.x, mons.y)]
                 dgfx = wizards.dead_gfx.DeadGraphic(mons.x, mons.y)
@@ -397,7 +408,7 @@ class GameScreen(object):
                     brn.removed = True
                     tup = (brn.x,brn.y)
                     remove_list.append(tup) 
-                    t = wizards.tree.Tree(brn.x,brn.y, self.tree_img)
+                    #t = wizards.tree.Tree(brn.x,brn.y, self.tree_img)
                     for tr in self.all_sprite_list.sprites():
                         if tr.x == brn.x and tr.y == brn.y:
                             self.all_sprite_list.remove(tr)
@@ -405,10 +416,21 @@ class GameScreen(object):
             for rm in remove_list:
                 rx = rm[0]
                 ry = rm[1]
-                self.world[ry][rx] == 0
-                cx = (rx * wizards.constants.F_BLOCKS) // wizards.constants.CHAR_SIZE
-                cy = (ry * wizards.constants.F_BLOCKS) // wizards.constants.CHAR_SIZE
-                self.collision_map[cy][cx] = 0
+                self.world[ry][rx] = 0
+
+                cx = rx // 2
+                cy = ry // 2
+                if rx % 2 > 0:
+                    nx = rx - 1
+                else:
+                    nx = rx + 1
+                if ry % 2 > 0:
+                    ny = ry - 1
+                else:
+                    ny = ry + 1
+
+                if self.world[ry][rx] == 0 and self.world[ry][nx] == 0 and self.world[ny][rx] == 0 and self.world[ny][nx] == 0 and self.buildings[cy][cx] == 0:
+                    self.collision_map[cy][cx] = 0
 
     def handle_events(self, events):
 
@@ -853,6 +875,11 @@ class GameScreen(object):
 
                         self.player_turn = False
                         self.all_monsters_moved = False
+                        print("SIZE OF MONSTER LIST = " + str(len(self.monster_list)))
+                        self.monster_to_take_turn = []
+                        for m in self.monster_list:
+                            if not m.dead:
+                                self.monster_to_take_turn.append(m)
 
         else:
 
@@ -860,33 +887,17 @@ class GameScreen(object):
 
             #monster_queue = wizards.my_queue.PriorityQueue()
 
-            print("SIZE OF MONSTER LIST = " + str(len(self.monster_list)))
 
-            for m in self.monster_list:
-                if not m.dead:
-                    m.do_turn(self.pl, self.player_distance_map, self.collision_map, self.monster_map)
+
+                    #m.do_turn(self.pl, self.player_distance_map, self.collision_map, self.monster_map, self.combat_resolver)
+
+
                 #fv = self.turns_prob.draw()
                 #monster_queue.put(m, fv)
 
-            self.all_monsters_moved = True
-            self.player_turn = True
-            self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
-
-                #for i in range(len(monster_queue.elements)):
-                    #m = monster_queue.get()
-                    #if not m.dead:
-
-
-                #if self.monster_queue.empty():
-
-                 #   num_mons = len(self.monster_list)
-
-                    #self.turns_prob = wizards.bags.NumberBag(1, num_mons, 1)
-
-                    #for m in self.monster_list:
-                    #    if not m.dead:
-                    #        fv = self.turns_prob.draw()
-                    #        self.monster_queue.put(m, fv)
+            #self.all_monsters_moved = True
+            #self.player_turn = True
+            #self.light.do_fov(self.pl.x, self.pl.y, self.pl.sight)
 
 
 
@@ -1185,7 +1196,9 @@ class GameScreen(object):
             self.monster_map[(k.x,k.y)] = k.monster_id
 
         for item in self.monster_list:
-            print(str(item))
+            ai_to_start = wizards.monster_ai.PassiveAI(self.collision_map)
+            item.set_ai(ai_to_start)
+
 
 
     def cycle_spell(self):

@@ -2,19 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="edf476af-d86c-40f3-b491-6a0a15f87c11" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/wizards/monster_ai.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards.py" afterPath="$PROJECT_DIR$/wizards.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/__init__.py" afterPath="$PROJECT_DIR$/wizards/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/bags.py" afterPath="$PROJECT_DIR$/wizards/bags.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/bandit.py" afterPath="$PROJECT_DIR$/wizards/bandit.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/base_monster.py" afterPath="$PROJECT_DIR$/wizards/base_monster.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/constants.py" afterPath="$PROJECT_DIR$/wizards/constants.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/game_screen.py" afterPath="$PROJECT_DIR$/wizards/game_screen.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/inventory_manager.py" afterPath="$PROJECT_DIR$/wizards/inventory_manager.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/inventory_object.py" afterPath="$PROJECT_DIR$/wizards/inventory_object.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/light_map.py" afterPath="$PROJECT_DIR$/wizards/light_map.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/monster_ai.py" afterPath="$PROJECT_DIR$/wizards/monster_ai.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/monster_gen.py" afterPath="$PROJECT_DIR$/wizards/monster_gen.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/searches.py" afterPath="$PROJECT_DIR$/wizards/searches.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/player.py" afterPath="$PROJECT_DIR$/wizards/player.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/wizards/resolve_combat.py" afterPath="$PROJECT_DIR$/wizards/resolve_combat.py" />
     </list>
     <ignored path="wizards-of-twiddly.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,18 +37,8 @@
       <file leaf-file-name="wizards.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/wizards.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="7" column="32" selection-start-line="7" selection-start-column="32" selection-end-line="7" selection-end-column="32" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="light_map.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/light_map.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1394">
-              <caret line="82" column="22" selection-start-line="82" selection-start-column="22" selection-end-line="82" selection-end-column="22" />
+            <state relative-caret-position="170">
+              <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -58,8 +47,8 @@
       <file leaf-file-name="game_screen.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/game_screen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
-              <caret line="174" column="43" selection-start-line="174" selection-start-column="43" selection-end-line="174" selection-end-column="43" />
+            <state relative-caret-position="183">
+              <caret line="359" column="80" selection-start-line="359" selection-start-column="80" selection-end-line="359" selection-end-column="80" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
               </folding>
@@ -67,11 +56,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="searches.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/searches.py">
+      <file leaf-file-name="resolve_combat.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/resolve_combat.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="45" selection-end-column="20" />
+            <state relative-caret-position="247">
+              <caret line="74" column="26" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -80,10 +69,49 @@
       <file leaf-file-name="base_monster.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/base_monster.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="64" column="28" selection-start-line="64" selection-start-column="28" selection-end-line="64" selection-end-column="28" />
+            <state relative-caret-position="370">
+              <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="101" selection-end-column="28" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
+                <element signature="e#1319#1844#0" expanded="false" />
+                <element signature="e#1877#1965#0" expanded="false" />
+                <element signature="e#2004#2046#0" expanded="false" />
+                <element signature="e#2085#2126#0" expanded="false" />
+                <element signature="e#2160#2182#0" expanded="false" />
+                <element signature="e#2217#2228#0" expanded="false" />
+                <element signature="e#2286#2580#0" expanded="false" />
+                <element signature="e#2642#2727#0" expanded="false" />
+                <element signature="e#2881#3039#0" expanded="false" />
+                <element signature="e#3073#3227#0" expanded="false" />
+                <element signature="e#3270#3390#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="monster_ai.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/wizards/monster_ai.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="476">
+              <caret line="518" column="16" selection-start-line="518" selection-start-column="16" selection-end-line="518" selection-end-column="16" />
+              <folding>
+                <element signature="e#0#19#0" expanded="true" />
+                <element signature="e#165#5333#0" expanded="false" />
+                <element signature="e#752#1921#0" expanded="false" />
+                <element signature="e#2024#3152#0" expanded="false" />
+                <element signature="e#3332#4327#0" expanded="false" />
+                <element signature="e#5367#10766#0" expanded="false" />
+                <element signature="e#10803#17005#0" expanded="false" />
+                <element signature="e#14654#15456#0" expanded="false" />
+                <element signature="e#16689#17005#0" expanded="false" />
+                <element signature="e#18809#19125#0" expanded="false" />
+                <element signature="e#19200#20000#0" expanded="false" />
+                <element signature="e#20036#20156#0" expanded="false" />
+                <element signature="e#20193#20319#0" expanded="false" />
+                <element signature="e#20353#20464#0" expanded="false" />
+                <element signature="e#20489#20751#0" expanded="false" />
+                <element signature="e#20778#21036#0" expanded="false" />
+                <element signature="e#21069#21331#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -92,8 +120,8 @@
       <file leaf-file-name="monster_gen.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/monster_gen.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
+            <state relative-caret-position="315">
+              <caret line="129" column="46" selection-start-line="129" selection-start-column="46" selection-end-line="129" selection-end-column="46" />
               <folding />
             </state>
           </provider>
@@ -102,41 +130,16 @@
       <file leaf-file-name="player.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/wizards/player.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
-              <caret line="38" column="58" selection-start-line="38" selection-start-column="58" selection-end-line="38" selection-end-column="58" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="monster_ai.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/monster_ai.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1734">
-              <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+            <state relative-caret-position="170">
+              <caret line="41" column="33" selection-start-line="41" selection-start-column="33" selection-end-line="41" selection-end-column="33" />
               <folding>
-                <element signature="e#0#19#0" expanded="true" />
+                <element signature="e#5021#5367#0" expanded="false" />
+                <element signature="e#5467#5720#0" expanded="false" />
+                <element signature="e#5765#6019#0" expanded="false" />
+                <element signature="e#6249#6482#0" expanded="false" />
+                <element signature="e#6524#6950#0" expanded="false" />
+                <element signature="e#7225#7690#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/utils.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="799">
-              <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="loading_screen.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1802">
-              <caret line="107" column="92" selection-start-line="107" selection-start-column="87" selection-end-line="107" selection-end-column="92" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -166,13 +169,11 @@
         <option value="$PROJECT_DIR$/wizards/name_maker.py" />
         <option value="$PROJECT_DIR$/wizards/exit_level.py" />
         <option value="$PROJECT_DIR$/wizards/utils.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/wizards/game_objects.py" />
         <option value="$PROJECT_DIR$/wizards/charmed_gfx.py" />
         <option value="$PROJECT_DIR$/wizards/scroll.py" />
         <option value="$PROJECT_DIR$/wizards/title_screen.py" />
         <option value="$PROJECT_DIR$/wizards/spells.py" />
-        <option value="$PROJECT_DIR$/wizards/constants.py" />
         <option value="$PROJECT_DIR$/wizards/w_rand.py" />
         <option value="$PROJECT_DIR$/wizards/w_rand_obj.py" />
         <option value="$PROJECT_DIR$/wizards/square_grid.py" />
@@ -187,21 +188,24 @@
         <option value="$PROJECT_DIR$/wizards/player_stats.py" />
         <option value="$PROJECT_DIR$/wizards/exit_level_screen.py" />
         <option value="$PROJECT_DIR$/wizards/list_vs_dict.py" />
-        <option value="$PROJECT_DIR$/wizards/player.py" />
-        <option value="$PROJECT_DIR$/wizards/resolve_combat.py" />
         <option value="$PROJECT_DIR$/wizards/skeleton.py" />
         <option value="$PROJECT_DIR$/wizards/bandit.py" />
-        <option value="$PROJECT_DIR$/wizards/inventory_manager.py" />
         <option value="$PROJECT_DIR$/wizards/searches.py" />
-        <option value="$PROJECT_DIR$/wizards/inventory_object.py" />
         <option value="$PROJECT_DIR$/wizards/bags.py" />
         <option value="$PROJECT_DIR$/wizards/__init__.py" />
-        <option value="$PROJECT_DIR$/wizards/monster_gen.py" />
-        <option value="$PROJECT_DIR$/wizards/game_screen.py" />
-        <option value="$PROJECT_DIR$/wizards/base_monster.py" />
-        <option value="$PROJECT_DIR$/wizards.py" />
         <option value="$PROJECT_DIR$/wizards/light_map.py" />
+        <option value="$PROJECT_DIR$/wizards/building_maker.py" />
+        <option value="$PROJECT_DIR$/wizards/constants.py" />
+        <option value="$PROJECT_DIR$/wizards/inventory_object.py" />
+        <option value="$PROJECT_DIR$/wizards/monster_gen.py" />
+        <option value="$PROJECT_DIR$/wizards/inventory_manager.py" />
+        <option value="$PROJECT_DIR$/wizards.py" />
+        <option value="$PROJECT_DIR$/wizards/base_monster.py" />
         <option value="$PROJECT_DIR$/wizards/monster_ai.py" />
+        <option value="$PROJECT_DIR$/wizards/game_screen.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/wizards/player.py" />
+        <option value="$PROJECT_DIR$/wizards/resolve_combat.py" />
       </list>
     </option>
   </component>
@@ -236,6 +240,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -254,23 +259,8 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="wizards-of-twiddly" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="wizards-of-twiddly" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="wizards" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Scratches" />
     </panes>
   </component>
@@ -682,7 +672,14 @@
       <option name="project" value="LOCAL" />
       <updated>1459873353306</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Added very basic AI.">
+      <created>1460067607132</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1460067607132</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -731,11 +728,11 @@
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1406744" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32719395" sideWeight="0.49578503" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32683983" sideWeight="0.49578503" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2112676" sideWeight="0.5147524" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.49789253" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2012987" sideWeight="0.48524764" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3181818" sideWeight="0.48524764" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14963119" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32900432" sideWeight="0.49789253" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -804,7 +801,8 @@
     <MESSAGE value="Added new stats plus random treasure drops (not complete)" />
     <MESSAGE value="Added shuffle bag feature and critical hits" />
     <MESSAGE value="Added varieties of bandits" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added varieties of bandits" />
+    <MESSAGE value="Added very basic AI." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added very basic AI." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -833,19 +831,17 @@
           <url>file://$PROJECT_DIR$/wizards/orc.py</url>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/wizards/base_monster.py</url>
+          <line>81</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="11" />
+      <option name="time" value="16" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/wizards/wizard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="11" column="53" selection-start-line="11" selection-start-column="53" selection-end-line="11" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/temp_gfx.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -854,13 +850,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wizards/monster_generator.py" />
-    <entry file="file://$PROJECT_DIR$/wizards/damage_token.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/level_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
@@ -886,20 +875,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="476">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/building_maker.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-102">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="4" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -1019,13 +994,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/resolve_combat.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="35" column="26" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/monsters_prob.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1047,13 +1015,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="425">
-          <caret line="26" column="117" selection-start-line="26" selection-start-column="117" selection-end-line="26" selection-end-column="117" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/bags.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -1061,33 +1022,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/orc.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="25" column="26" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/inventory_object.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="47" column="37" selection-start-line="47" selection-start-column="37" selection-end-line="47" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="185" selection-start-line="3" selection-start-column="185" selection-end-line="3" selection-end-column="185" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/square_grid.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="38" column="17" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -1113,13 +1051,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1409">
-          <caret line="92" column="10" selection-start-line="92" selection-start-column="10" selection-end-line="92" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/a_star.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="374">
@@ -1127,27 +1058,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1802">
-          <caret line="107" column="92" selection-start-line="107" selection-start-column="87" selection-end-line="107" selection-end-column="92" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/wizards/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="799">
+        <state relative-caret-position="435">
           <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/player.py">
+    <entry file="file://$PROJECT_DIR$/wizards/scene.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="38" column="58" selection-start-line="38" selection-start-column="58" selection-end-line="38" selection-end-column="58" />
-          <folding />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/damage_token.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -1155,60 +1083,171 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1394">
           <caret line="82" column="22" selection-start-line="82" selection-start-column="22" selection-end-line="82" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/base_monster.py">
+    <entry file="file://$PROJECT_DIR$/wizards/square_grid.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="64" column="28" selection-start-line="64" selection-start-column="28" selection-end-line="64" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#21#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/monster_gen.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="2" column="14" selection-start-line="2" selection-start-column="14" selection-end-line="2" selection-end-column="14" />
-          <folding />
+        <state relative-caret-position="163">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="13" selection-end-column="59" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wizards/searches.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
+        <state relative-caret-position="533">
           <caret line="40" column="0" selection-start-line="40" selection-start-column="0" selection-end-line="45" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/loading_screen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1819">
+          <caret line="108" column="101" selection-start-line="108" selection-start-column="92" selection-end-line="108" selection-end-column="101" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/wizards/monster_ai.py">
+    <entry file="file://$PROJECT_DIR$/wizards/orc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1734">
-          <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#19#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/building_maker.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="148" column="19" selection-start-line="148" selection-start-column="19" selection-end-line="148" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/inventory_object.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="37" column="28" selection-start-line="37" selection-start-column="28" selection-end-line="37" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="103" column="8" selection-start-line="103" selection-start-column="8" selection-end-line="103" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/inventory_manager.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="24" column="107" selection-start-line="24" selection-start-column="107" selection-end-line="24" selection-end-column="107" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/wizards/game_screen.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
-          <caret line="174" column="43" selection-start-line="174" selection-start-column="43" selection-end-line="174" selection-end-column="43" />
+        <state relative-caret-position="183">
+          <caret line="359" column="80" selection-start-line="359" selection-start-column="80" selection-end-line="359" selection-end-column="80" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/resolve_combat.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="74" column="26" selection-start-line="74" selection-start-column="26" selection-end-line="74" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/base_monster.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="370">
+          <caret line="98" column="0" selection-start-line="98" selection-start-column="0" selection-end-line="101" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#21#0" expanded="true" />
+            <element signature="e#1319#1844#0" expanded="false" />
+            <element signature="e#1877#1965#0" expanded="false" />
+            <element signature="e#2004#2046#0" expanded="false" />
+            <element signature="e#2085#2126#0" expanded="false" />
+            <element signature="e#2160#2182#0" expanded="false" />
+            <element signature="e#2217#2228#0" expanded="false" />
+            <element signature="e#2286#2580#0" expanded="false" />
+            <element signature="e#2642#2727#0" expanded="false" />
+            <element signature="e#2881#3039#0" expanded="false" />
+            <element signature="e#3073#3227#0" expanded="false" />
+            <element signature="e#3270#3390#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/monster_ai.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="518" column="16" selection-start-line="518" selection-start-column="16" selection-end-line="518" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#165#5333#0" expanded="false" />
+            <element signature="e#752#1921#0" expanded="false" />
+            <element signature="e#2024#3152#0" expanded="false" />
+            <element signature="e#3332#4327#0" expanded="false" />
+            <element signature="e#5367#10766#0" expanded="false" />
+            <element signature="e#10803#17005#0" expanded="false" />
+            <element signature="e#14654#15456#0" expanded="false" />
+            <element signature="e#16689#17005#0" expanded="false" />
+            <element signature="e#18809#19125#0" expanded="false" />
+            <element signature="e#19200#20000#0" expanded="false" />
+            <element signature="e#20036#20156#0" expanded="false" />
+            <element signature="e#20193#20319#0" expanded="false" />
+            <element signature="e#20353#20464#0" expanded="false" />
+            <element signature="e#20489#20751#0" expanded="false" />
+            <element signature="e#20778#21036#0" expanded="false" />
+            <element signature="e#21069#21331#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/monster_gen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="129" column="46" selection-start-line="129" selection-start-column="46" selection-end-line="129" selection-end-column="46" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/wizards/player.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="41" column="33" selection-start-line="41" selection-start-column="33" selection-end-line="41" selection-end-column="33" />
+          <folding>
+            <element signature="e#5021#5367#0" expanded="false" />
+            <element signature="e#5467#5720#0" expanded="false" />
+            <element signature="e#5765#6019#0" expanded="false" />
+            <element signature="e#6249#6482#0" expanded="false" />
+            <element signature="e#6524#6950#0" expanded="false" />
+            <element signature="e#7225#7690#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/wizards.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" column="32" selection-start-line="7" selection-start-column="32" selection-end-line="7" selection-end-column="32" />
+        <state relative-caret-position="170">
+          <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
           <folding />
         </state>
       </provider>

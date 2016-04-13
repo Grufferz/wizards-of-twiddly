@@ -65,6 +65,35 @@ class CombatResolver():
             player.mons_killed_melee += 1
         return dmg
 
+    def monster_hit_player(self, monster, player):
+        monster_hd = monster.level - 1
+        if monster_hd < 0:
+            monster_hd = 0
+        elif monster_hd > 6:
+            monster_hd = 6
+
+        p_ac = player.ac + 3
+        if p_ac < 0:
+            p_ac = 0
+        if p_ac > 12:
+            p_ac = 12
+
+
+        roll = monster.hit_chance.draw() + monster.current_weapon.adjuster
+
+        print(str(roll) + " >> " + str(self.monster_attacks[monster_hd][p_ac]))
+
+        if roll >= self.monster_attacks[monster_hd][p_ac]:
+            if roll >= 20:
+                dmg = monster.get_weapon_damage() + monster.get_weapon_damage()
+            else:
+                dmg = monster.get_weapon_damage()
+            if dmg > 0:
+                player.take_damage(dmg)
+        else:
+            dmg = 0
+        return dmg
+
     def get_xp_for_monster(self, level):
         if level > 6:
             level = 6
